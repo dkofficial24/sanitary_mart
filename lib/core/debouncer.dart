@@ -8,12 +8,12 @@ class DeBouncer {
 
   static Timer? timer;
 
-  static run(VoidCallback action) {
+  static run(VoidCallback action, {int milliseconds = 300}) {
     if (null != timer) {
       timer!.cancel();
     }
     timer = Timer(
-      const Duration(milliseconds: Duration.millisecondsPerSecond),
+      Duration(milliseconds: milliseconds),
       action,
     );
   }

@@ -6,8 +6,8 @@ import 'package:sanitary_mart/brand/screen/brand_screen.dart';
 import 'package:sanitary_mart/category/provider/category_provider.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
-import 'package:sanitary_mart/core/widget/grid_item_widget.dart';
 import 'package:sanitary_mart/core/widget/shimmer_grid_list_widget.dart';
+import 'package:sanitary_mart/core/widget/widget.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -21,15 +21,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     FirebaseAnalytics.instance.logEvent(name: 'category_tab');
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<CategoryProvider>(context, listen: false).fetchCategories();
+      fetchCategories();
     });
     super.initState();
+  }
+
+  void fetchCategories() {
+    Provider.of<CategoryProvider>(context, listen: false).fetchCategories();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Categories',
       ),
       body: Padding(
@@ -38,6 +42,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
           builder: (context, provider, child) {
             if (provider.state == ProviderState.loading) {
               return const ShimmerGridListWidget();
+            } else if (provider.state == ProviderState.error) {
+              return ErrorRetryWidget(
+                onRetry: () {
+                  fetchCategories();
+                },
+              );
             }
 
             if (provider.categoryList.isEmpty) {
@@ -58,7 +68,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 final category = provider.categoryList[index];
                 return GridItemWidget(
                   name: category.name,
-                  image:category.imagePath.toString() ,
+                  image: category.imagePath ?? '',
                   onItemTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) {
                       return BrandScreen(category.id!);

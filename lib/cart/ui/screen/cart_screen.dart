@@ -9,6 +9,7 @@ import 'package:sanitary_mart/cart/ui/screen/checkout_screen.dart';
 import 'package:sanitary_mart/cart/ui/screen/widget/cart_item_widget.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
+import 'package:sanitary_mart/core/widget/error_retry_widget.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -53,6 +54,12 @@ class _CartScreenState extends State<CartScreen> {
       if (cartProvider.state == ProviderState.loading) {
         widget = const Center(
           child: CircularProgressIndicator(),
+        );
+      } else if (cartProvider.state == ProviderState.error) {
+        widget = ErrorRetryWidget(
+          onRetry: () {
+            fetchCartItems();
+          },
         );
       } else {
         if (subtotal >= 1) {

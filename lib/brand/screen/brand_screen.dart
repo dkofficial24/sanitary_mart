@@ -6,6 +6,7 @@ import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/core/widget/grid_item_widget.dart';
 import 'package:sanitary_mart/core/widget/shimmer_grid_list_widget.dart';
+import 'package:sanitary_mart/core/widget/widget.dart';
 import 'package:sanitary_mart/product/ui/screen/product_list_screen.dart';
 
 class BrandScreen extends StatefulWidget {
@@ -21,14 +22,18 @@ class _BrandScreenState extends State<BrandScreen> {
   @override
   void initState() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<BrandProvider>(
-        context,
-        listen: false,
-      ).getBrandsByCategory(
-        widget.categoryId,
-      );
+      fetchBrandsByCategory();
     });
     super.initState();
+  }
+
+  void fetchBrandsByCategory() {
+    Provider.of<BrandProvider>(
+      context,
+      listen: false,
+    ).getBrandsByCategory(
+      widget.categoryId,
+    );
   }
 
   @override
@@ -44,6 +49,12 @@ class _BrandScreenState extends State<BrandScreen> {
 
             if (provider.state == ProviderState.loading) {
               return const ShimmerGridListWidget();
+            }else if (provider.state == ProviderState.error) {
+              return ErrorRetryWidget(
+                onRetry: () {
+                  fetchBrandsByCategory();
+                },
+              );
             }
 
             if (provider.brandList.isEmpty) {
@@ -64,7 +75,7 @@ class _BrandScreenState extends State<BrandScreen> {
                 final brand = provider.brandList[index];
                 return GridItemWidget(
                   name: brand.name,
-                  image: brand.imagePath.toString(),
+                  image: brand.imagePath ?? '',
                   onItemTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) {
                       return ProductListScreen(

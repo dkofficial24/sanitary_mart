@@ -33,8 +33,11 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart');
     } catch (e) {
+      _state = ProviderState.error;
       AppUtil.showToast('Something went wrong');
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart_error');
+    } finally {
+      notifyListeners();
     }
     OrderService().fetchUserOrders(userId);
   }
@@ -57,6 +60,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<void> removeFromCart(String uid, String productId) async {
+    _state = ProviderState.idle;
     CartFirebaseService cartService = Get.find();
     await cartService.removeProductFromCart(uid,productId); // Use injected service
     final index = _cartItems.indexWhere((item) => item.productId == productId);

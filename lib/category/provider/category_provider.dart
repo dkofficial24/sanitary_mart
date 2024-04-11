@@ -22,9 +22,7 @@ class CategoryProvider extends ChangeNotifier {
     try {
       _state = ProviderState.loading;
       notifyListeners();
-
       _categoryList = await firebaseService.getCategories();
-
       _state = ProviderState.idle;
     } catch (e) {
       _error = 'Failed to fetch items: $e';

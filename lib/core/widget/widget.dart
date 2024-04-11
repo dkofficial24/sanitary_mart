@@ -5,3 +5,4 @@ export 'custom_loader.dart';
 export 'image_placeholder_widget.dart';
 export 'grid_item_widget.dart';
 export 'otp_widget.dart';
+export 'error_retry_widget.dart';
