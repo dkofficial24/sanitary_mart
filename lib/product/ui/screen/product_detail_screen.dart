@@ -8,6 +8,8 @@ import 'package:sanitary_mart/auth/provider/auth_provider.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/provider/cart_provider.dart';
 import 'package:sanitary_mart/core/app_util.dart';
+import 'package:sanitary_mart/core/debouncer.dart';
+import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/app_image_network_widget.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
@@ -164,28 +166,9 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (_quantity == 0) {
-                      AppUtil.showToast('Quantity value can not be empty');
-                      return;
-                    }
-
-                    double discount = widget.product.discountAmount;
-
-                    final cartProvider =
-                        Provider.of<CartProvider>(context, listen: false);
-                    CartItem cartItem = CartItem(
-                      productId: widget.product.id ?? "0",
-                      productName: widget.product.name,
-                      price: widget.product.price,
-                      brand: widget.brandName,
-                      quantity: _quantity,
-                      productImg: widget.product.image,
-                      discountAmount: discount,
-                      createdAt: DateTime.now().millisecondsSinceEpoch,
-                      updatedAt: DateTime.now().millisecondsSinceEpoch,
-                    );
-                    String? uid = getUserId();
-                    cartProvider.addToCart(uid!, cartItem);
+                    DeBouncer.run(() {
+                      addToCart();
+                    });
                   },
                   child: const Text('Add to Cart'),
                 ),
@@ -206,5 +189,33 @@ class ProductDetailPageState extends State<ProductDetailPage> {
   String? getUserId() {
     return Provider.of<AuthenticationProvider>(context, listen: false)
         .getCurrentUser();
+  }
+
+  void addToCart() {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    if (cartProvider.state == ProviderState.loading) {
+      return;
+    }
+
+    if (_quantity == 0) {
+      AppUtil.showToast('Quantity value can not be empty');
+      return;
+    }
+
+    double discount = widget.product.discountAmount;
+
+    CartItem cartItem = CartItem(
+      productId: widget.product.id ?? "0",
+      productName: widget.product.name,
+      price: widget.product.price,
+      brand: widget.brandName,
+      quantity: _quantity,
+      productImg: widget.product.image,
+      discountAmount: discount,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    String? uid = getUserId();
+    cartProvider.addToCart(uid!, cartItem);
   }
 }
