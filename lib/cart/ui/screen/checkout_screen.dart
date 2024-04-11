@@ -165,13 +165,13 @@ class CheckoutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  'Qty: ${cartItem.quantity}',
+                  'Qty: ${cartItem.quantity}*${cartItem.price}',
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
           ),
-          Text('₹${cartItem.price.toStringAsFixed(2)}'),
+          Text('₹${((cartItem.price)*(cartItem.quantity)).toStringAsFixed(2)}'),
         ],
       ),
     );
