@@ -64,7 +64,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(
-                    height: 200.0,
+                    height: Get.width - 32,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: NetworkImageWidget(widget.product.image),
