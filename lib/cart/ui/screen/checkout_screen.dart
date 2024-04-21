@@ -8,6 +8,7 @@ import 'package:sanitary_mart/cart/provider/cart_provider.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
+import 'package:sanitary_mart/core/widget/translucent_overlay_loader.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
 
@@ -32,76 +33,83 @@ class CheckoutScreen extends StatelessWidget {
       appBar: const CustomAppBar(
         title: 'Checkout',
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Review Your Order',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: cartItems.length,
-                itemBuilder: (context, index) {
-                  final cartItem = cartItems[index];
-                  return _buildOrderItem(cartItem);
-                },
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            const Divider(),
-            const SizedBox(height: 16.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildTotalSection(total),
-                if (totalDiscount > 0)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Consumer<OrderProvider>(
+        builder: (BuildContext context, OrderProvider orderProvider, Widget? child) {
+          return TranslucentOverlayLoader(
+            enabled: orderProvider.state == ProviderState.loading,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Review Your Order',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        final cartItem = cartItems[index];
+                        return _buildOrderItem(cartItem);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Divider(),
+                  const SizedBox(height: 16.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text(
-                        'Points',
-                        style: TextStyle(color: Colors.green),
-                      ),
-                      Text(
-                        (totalDiscount / 10).toStringAsFixed(1),
-                        style: const TextStyle(color: Colors.green),
-                      ),
+                      _buildTotalSection(total),
+                      if (totalDiscount > 0)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Points',
+                              style: TextStyle(color: Colors.green),
+                            ),
+                            Text(
+                              (totalDiscount / 10).toStringAsFixed(1),
+                              style: const TextStyle(color: Colors.green),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
-              ],
-            ),
-            const SizedBox(height: 16.0),
-            Form(
-              key: formKey,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  // Full width button
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  const SizedBox(height: 16.0),
+                  Form(
+                    key: formKey,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        // Full width button
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (Provider.of<OrderProvider>(context, listen: false)
+                            .state ==
+                            ProviderState.loading) {
+                          return;
+                        }
+                        confirmOrder(context);
+                        // showAddressBottomSheet(context);
+                      },
+                      child: const Text('Proceed to Order'),
+                    ),
                   ),
-                ),
-                onPressed: () {
-                  if (Provider.of<OrderProvider>(context, listen: false)
-                          .state ==
-                      ProviderState.loading) {
-                    return;
-                  }
-                  confirmOrder(context);
-                  // showAddressBottomSheet(context);
-                },
-                child: const Text('Proceed to Order'),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -189,7 +197,7 @@ class CheckoutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  '${cartItem.price}×${cartItem.quantity}',
+                  '${cartItem.price.toStringAsFixed(0)}×${cartItem.quantity}',
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],

@@ -23,6 +23,7 @@ class OrderProvider extends ChangeNotifier {
       {required List<CartItem> cartItems, required UserModel userModel}) async {
     try {
       _state = ProviderState.loading;
+      notifyListeners();
       List<OrderItem> orderItems = [];
       for (int i = 0; i < cartItems.length; i++) {
         orderItems.add(OrderItem.fromCartItem(cartItems[i]));
@@ -49,6 +50,7 @@ class OrderProvider extends ChangeNotifier {
       _state = ProviderState.idle;
       FirebaseAnalytics.instance.logEvent(name: 'order_placed');
       await Get.find<OrderService>().fetchUserOrders(order.customer!.uId);
+      _state = ProviderState.idle;
       Get.offAll(const DashboardScreen());
     } catch (e) {
       _state = ProviderState.error;

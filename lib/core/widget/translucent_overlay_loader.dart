@@ -11,7 +11,7 @@ class TranslucentOverlayLoader extends StatelessWidget {
     required this.child,
     this.enabled=false,
     this.backgroundColorOpacity = 0.4, // default background opacity
-    this.loaderSize = 55, // default loader size
+    this.loaderSize = 40, // default loader size
   });
 
   @override
