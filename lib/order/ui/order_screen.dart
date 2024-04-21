@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
+import 'package:sanitary_mart/core/widget/translucent_overlay_loader.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
 import 'package:sanitary_mart/order/ui/widget/order_card_widget.dart';
@@ -47,9 +48,7 @@ class _OrderScreenState extends State<OrderScreen> {
       appBar: const CustomAppBar(title: 'Orders'),
       body: Consumer<OrderProvider>(
         builder: (context, provider, child) {
-          if (provider.state == ProviderState.loading) {
-            return const CircularProgressIndicator();
-          } else if (provider.state == ProviderState.error) {
+          if (provider.state == ProviderState.error) {
             return ErrorRetryWidget(
               onRetry: () {
                 fetchOrders();
@@ -66,17 +65,17 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
             );
           }
-          if (provider.state == ProviderState.loading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return ListView.builder(
-            itemCount: provider.orderModelList?.length ?? 0,
-            itemBuilder: (context, index) {
-              final order = provider.orderModelList![index];
-              return OrderCard(order: order); // Use a separate OrderCard widget
-            },
+
+          return TranslucentOverlayLoader(
+            enabled: provider.state == ProviderState.loading,
+            child: ListView.builder(
+              itemCount: provider.orderModelList?.length ?? 0,
+              itemBuilder: (context, index) {
+                final order = provider.orderModelList![index];
+                return OrderCard(
+                    order: order); // Use a separate OrderCard widget
+              },
+            ),
           );
         },
       ),
