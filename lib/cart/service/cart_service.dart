@@ -31,7 +31,6 @@ class CartFirebaseService {
   }
 
   Future<void> clearFullCart(String userId) async {
-    try {
       final docRef = _cartCollection.doc(userId);
       // Delete the cart document
       await docRef.delete();
@@ -42,10 +41,7 @@ class CartFirebaseService {
       for (var doc in cartItemsSnapshot.docs) {
         await doc.reference.delete();
       }
-    } catch (e) {
-      // Handle errors here
-      print('Error clearing full cart: $e');
-    }
+
   }
 
 
