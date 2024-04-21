@@ -13,7 +13,7 @@ import 'package:sanitary_mart/order/model/order_model.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
 
 class OrderProvider extends ChangeNotifier {
-  ProviderState _state = ProviderState.idle;
+  ProviderState _state = ProviderState.loading;
 
   ProviderState get state => _state;
 
@@ -65,6 +65,7 @@ class OrderProvider extends ChangeNotifier {
   Future loadOrders(String uId) async {
     try {
       _state = ProviderState.loading;
+      notifyListeners();
       orderModelList = await Get.find<OrderService>().fetchUserOrders(uId);
       _state = ProviderState.idle;
     } catch (e) {

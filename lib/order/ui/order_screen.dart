@@ -56,8 +56,9 @@ class _OrderScreenState extends State<OrderScreen> {
             );
           }
 
-          if (provider.orderModelList == null ||
-              provider.orderModelList!.isEmpty) {
+          if (provider.state == ProviderState.idle &&
+              (provider.orderModelList == null ||
+                  provider.orderModelList!.isEmpty)) {
             return Center(
               child: Text(
                 'There are no orders yet.',
