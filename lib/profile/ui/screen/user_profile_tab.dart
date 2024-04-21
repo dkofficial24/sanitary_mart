@@ -9,6 +9,7 @@ import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
 import 'package:sanitary_mart/order/ui/order_screen.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
+import 'package:sanitary_mart/profile/ui/screen/about_us.dart';
 import 'package:sanitary_mart/profile/ui/screen/address_list_screen.dart';
 import 'package:sanitary_mart/profile/ui/screen/personal_information_screen.dart';
 
@@ -51,6 +52,15 @@ class UserProfileTab extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('About Us'),
+            subtitle: const Text('Company detail and contact info'),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Get.to(const AboutUsScreen());
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sign Out'),
             subtitle: const Text('Sign out from your account'),
@@ -58,7 +68,9 @@ class UserProfileTab extends StatelessWidget {
               signOut(context);
             },
           ),
-          SizedBox(height: Get.height*0.4,),
+          SizedBox(
+            height: Get.height * 0.2,
+          ),
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder: (context, snapshot) {
@@ -66,11 +78,14 @@ class UserProfileTab extends StatelessWidget {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Version ${snapshot.data!.version}',style: TextStyle(color: Colors.grey[400],fontSize: 12),),
+                    child: Text(
+                      'Version ${snapshot.data!.version}',
+                      style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                    ),
                   ),
                 );
               } else {
-                return Container(); // Empty container if version is not yet retrieved
+                return Container();
               }
             },
           ),
