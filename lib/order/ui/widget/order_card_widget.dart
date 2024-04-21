@@ -11,6 +11,7 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double total = 0;
+    double discount = 0;
     return Card(
       margin: const EdgeInsets.all(10.0),
       child: Padding(
@@ -21,7 +22,7 @@ class OrderCard extends StatelessWidget {
             Text(
               'Order ID: ${order.orderId}',
               style:
-                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text('Date: ${_formatDate(order.createdAt)}'),
@@ -34,7 +35,8 @@ class OrderCard extends StatelessWidget {
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
             ...order.orderItems.map((item) {
-              total = total+item.price;
+              total = total + (item.price * item.quantity);
+              discount = discount + (item.discountAmount * item.quantity);
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -66,11 +68,26 @@ class OrderCard extends StatelessWidget {
             const Divider(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  const Text('Total:'),
-                  Text(total.toString()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total:'),
+                      Text(total.toString()),
+                    ],
+                  ),
+                  if(discount>0)Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Points:',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                      Text((discount / 10).toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.green)),
+                    ],
+                  ),
                 ],
               ),
             ),

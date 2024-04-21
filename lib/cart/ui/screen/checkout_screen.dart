@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
+import 'package:sanitary_mart/cart/provider/cart_provider.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
@@ -23,6 +24,9 @@ class CheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double total = _calculateTotal();
+
+    double totalDiscount =
+        Provider.of<CartProvider>(context).calculateTotalDiscount(cartItems);
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -53,18 +57,37 @@ class CheckoutScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             const Divider(),
             const SizedBox(height: 16.0),
-            _buildTotalSection(total),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _buildTotalSection(total),
+                if (totalDiscount > 0)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Points',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                      Text(
+                        (totalDiscount / 10).toStringAsFixed(1),
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
             const SizedBox(height: 16.0),
             Form(
               key: formKey,
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    // Full width button
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  // Full width button
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
+                ),
                 onPressed: () {
                   if (Provider.of<OrderProvider>(context, listen: false)
                           .state ==
@@ -148,6 +171,7 @@ class CheckoutScreen extends StatelessWidget {
   }
 
   Widget _buildOrderItem(CartItem cartItem) {
+    double itemTotal = cartItem.price * cartItem.quantity;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -165,13 +189,18 @@ class CheckoutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  'Qty: ${cartItem.quantity}*${cartItem.price}',
+                  '${cartItem.price}×${cartItem.quantity}',
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
           ),
-          Text('₹${((cartItem.price)*(cartItem.quantity)).toStringAsFixed(2)}'),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('₹${itemTotal.toStringAsFixed(2)}'),
+            ],
+          ),
         ],
       ),
     );

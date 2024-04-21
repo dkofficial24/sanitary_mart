@@ -15,6 +15,8 @@ class CartProvider extends ChangeNotifier {
 
   ProviderState get state => _state;
 
+  int totalDiscount = 0;
+
   List<CartItem> get cartItems =>
       _cartItems.toList(); // Return a copy of the list
 
@@ -51,7 +53,7 @@ class CartProvider extends ChangeNotifier {
       AppUtil.showToast('Added to cart');
       FirebaseAnalytics.instance.logEvent(name: 'add_to_cart');
     } catch (e) {
-      Log.e(e.toString());
+   //   Log.e(e.toString());
     } finally {
       _state = ProviderState.idle;
       notifyListeners();
@@ -62,7 +64,8 @@ class CartProvider extends ChangeNotifier {
   Future<void> removeFromCart(String uid, String productId) async {
     _state = ProviderState.idle;
     CartFirebaseService cartService = Get.find();
-    await cartService.removeProductFromCart(uid,productId); // Use injected service
+    await cartService.removeProductFromCart(
+        uid, productId); // Use injected service
     final index = _cartItems.indexWhere((item) => item.productId == productId);
     if (index != -1) {
       _cartItems.removeAt(index);
@@ -70,6 +73,14 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
       FirebaseAnalytics.instance.logEvent(name: 'remove_from_cart');
     }
+  }
+
+  double calculateTotalDiscount(List<CartItem> cartItems) {
+    double totalDiscount = 0;
+    for (var element in cartItems) {
+      totalDiscount += ((element.discountAmount ?? 0) * element.quantity);
+    }
+    return totalDiscount;
   }
 
   Future<void> updateCartItemQuantity({
