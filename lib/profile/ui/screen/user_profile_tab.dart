@@ -42,15 +42,15 @@ class UserProfileTab extends StatelessWidget {
               Get.to(const OrderScreen());
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.location_on),
-            title: const Text('Addresses'),
-            subtitle: const Text('Manage your delivery addresses'),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              Get.to(AddressListScreen());
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.location_on),
+          //   title: const Text('Addresses'),
+          //   subtitle: const Text('Manage your delivery addresses'),
+          //   trailing: const Icon(Icons.keyboard_arrow_right),
+          //   onTap: () {
+          //     Get.to(AddressListScreen());
+          //   },
+          // ),
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('About Us'),

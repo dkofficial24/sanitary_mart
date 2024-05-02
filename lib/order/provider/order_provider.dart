@@ -10,14 +10,17 @@ import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
 import 'package:sanitary_mart/order/model/order_item.dart';
 import 'package:sanitary_mart/order/model/order_model.dart';
+import 'package:sanitary_mart/order/model/order_status.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
+import 'package:sanitary_mart/order/ui/order_screen.dart';
 
 class OrderProvider extends ChangeNotifier {
-  ProviderState _state = ProviderState.loading;
+  ProviderState _state = ProviderState.idle;
 
   ProviderState get state => _state;
 
   List<OrderModel>? orderModelList;
+  List<OrderModel>? filteredOrderModelList;
 
   Future placeOrder(
       {required List<CartItem> cartItems, required UserModel userModel}) async {
@@ -33,9 +36,10 @@ class OrderProvider extends ChangeNotifier {
       OrderModel order = OrderModel(
           orderId: orderId,
           orderItems: orderItems,
-          orderStatus: false,
+          orderStatus: OrderStatus.pending,
           createdAt: DateTime.now().millisecondsSinceEpoch,
           updatedAt: DateTime.now().millisecondsSinceEpoch,
+          userVerified: userModel.verified??false,
           customer: Customer(
             uId: userModel.uId,
             userName: userModel.userName,
@@ -52,6 +56,7 @@ class OrderProvider extends ChangeNotifier {
       await Get.find<OrderService>().fetchUserOrders(order.customer!.uId);
       _state = ProviderState.idle;
       Get.offAll(const DashboardScreen());
+      Get.to(const OrderScreen());
     } catch (e) {
       _state = ProviderState.error;
       AppUtil.showToast('Something went wrong!');
@@ -66,19 +71,33 @@ class OrderProvider extends ChangeNotifier {
     try {
       _state = ProviderState.loading;
       notifyListeners();
-      orderModelList = await Get.find<OrderService>().fetchUserOrders(uId);
+      filteredOrderModelList =
+          orderModelList = await Get.find<OrderService>().fetchUserOrders(uId);
       _state = ProviderState.idle;
     } catch (e) {
       _state = ProviderState.error;
       Log.e(e);
-      orderModelList = [];
+      filteredOrderModelList = orderModelList = [];
       FirebaseAnalytics.instance.logEvent(name: 'load_orders');
     } finally {
       notifyListeners();
     }
   }
 
+  void filterOrderByStatus(OrderStatus? orderStatus) {
+    if (orderStatus == null) {
+      filteredOrderModelList = orderModelList;
+      notifyListeners();
+      return;
+    }
+    filteredOrderModelList = orderModelList
+        ?.where((element) => element.orderStatus == orderStatus)
+        .toList();
+    notifyListeners();
+  }
+
   void reset() {
     orderModelList = [];
+    filteredOrderModelList = [];
   }
 }

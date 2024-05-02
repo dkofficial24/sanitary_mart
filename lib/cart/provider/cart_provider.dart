@@ -32,7 +32,6 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
       _cartItems = await cartService.getCartItems(userId);
       _state = ProviderState.idle;
-      notifyListeners();
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart');
     } catch (e) {
       _state = ProviderState.error;

@@ -26,15 +26,21 @@ class CheckoutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double total = _calculateTotal();
 
-    double totalDiscount =
-        Provider.of<CartProvider>(context).calculateTotalDiscount(cartItems);
+    double totalDiscount = 0;
+
+    UserModel? userModel = Provider.of<UserProvider>(context).userModel;
+    if (userModel != null && (userModel.verified ?? false)) {
+      totalDiscount =
+          Provider.of<CartProvider>(context).calculateTotalDiscount(cartItems);
+    }
 
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Checkout',
       ),
       body: Consumer<OrderProvider>(
-        builder: (BuildContext context, OrderProvider orderProvider, Widget? child) {
+        builder:
+            (BuildContext context, OrderProvider orderProvider, Widget? child) {
           return TranslucentOverlayLoader(
             enabled: orderProvider.state == ProviderState.loading,
             child: Padding(

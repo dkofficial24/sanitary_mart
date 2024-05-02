@@ -79,7 +79,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 final Product product = provider.products[index];
                 return InkWell(
                   onTap: () {
-                    Get.to(ProductDetailPage(
+                    Get.off(ProductDetailPage(
                       product: product,
                       brandName: widget.brandName,
                     ));

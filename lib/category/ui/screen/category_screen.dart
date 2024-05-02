@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/brand/screen/brand_screen.dart';
 import 'package:sanitary_mart/category/provider/category_provider.dart';
@@ -70,9 +71,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   name: category.name,
                   image: category.imagePath ?? '',
                   onItemTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) {
-                      return BrandScreen(category.id!);
-                    }));
+                    Get.to(BrandScreen(category.id!));
                   },
                 );
               },

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/brand/provider/brand_provider.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
-import 'package:sanitary_mart/core/widget/grid_item_widget.dart';
 import 'package:sanitary_mart/core/widget/shimmer_grid_list_widget.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
 import 'package:sanitary_mart/product/ui/screen/product_list_screen.dart';
@@ -77,13 +77,11 @@ class _BrandScreenState extends State<BrandScreen> {
                   name: brand.name,
                   image: brand.imagePath ?? '',
                   onItemTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) {
-                      return ProductListScreen(
-                        categoryId: widget.categoryId,
-                        brandId: brand.id!,
-                        brandName: brand.name,
-                      );
-                    }));
+                    Get.off(ProductListScreen(
+                      categoryId: widget.categoryId,
+                      brandId: brand.id!,
+                      brandName: brand.name,
+                    ));
                   },
                 );
               },
