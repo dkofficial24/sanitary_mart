@@ -1,0 +1,22 @@
+require 'yaml'
+
+releaseConfig = YAML.load_file('release_notes.yml')
+config = YAML.load_file('config.yml')
+
+platform :android do
+  desc "Android Firebase App Distribution Prod"
+  gradle(
+    task: 'assemble',
+    build_type: 'Release'
+  )
+
+  lane :deploy_to_firebase do
+    firebase_app_distribution(
+      app: config['firebase_app_id'],
+      apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
+      testers: config['testers_email'],
+      release_notes: releaseConfig['release_note'], # Corrected here
+      firebase_cli_path: "/usr/local/bin/firebase"
+    )
+  end
+end
