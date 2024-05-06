@@ -1,8 +1,10 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
+import 'package:sanitary_mart/auth/screen/user_detail_screen.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/provider/cart_provider.dart';
 import 'package:sanitary_mart/core/app_util.dart';
@@ -254,8 +256,13 @@ class CheckoutScreen extends StatelessWidget {
     UserModel? userModel =
         await Provider.of<UserProvider>(context, listen: false)
             .getCurrentUser();
+
     if (userModel != null) {
-      checkoutProvider.placeOrder(cartItems: cartItems, userModel: userModel);
+      if (userModel.phone == null) {
+        Get.to(const UserDetailsScreen());
+      } else {
+        checkoutProvider.placeOrder(cartItems: cartItems, userModel: userModel);
+      }
     } else {
       FirebaseAnalytics.instance.logEvent(name: 'user_not_found');
       AppUtil.showToast('User not found!');

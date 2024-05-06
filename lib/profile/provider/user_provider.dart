@@ -22,7 +22,12 @@ class UserProvider extends ChangeNotifier {
   Future loadUserModel() async {
     try {
       UserFirebaseService userFirebaseService = Get.find();
-      userModel = await userFirebaseService.getLoggedUser();
+      UserModel? user = await userFirebaseService.getLoggedUser();
+      if(user == null){
+        throw 'User not found';
+      }else{
+        userModel = user;
+      }
       notifyListeners();
     } catch (e) {
       Log.e(e);

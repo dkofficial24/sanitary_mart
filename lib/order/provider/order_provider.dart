@@ -44,7 +44,7 @@ class OrderProvider extends ChangeNotifier {
             uId: userModel.uId,
             userName: userModel.userName,
             email: userModel.email,
-            phone: userModel.phone,
+            phone: userModel.phone ??'',
             userDeviceToken: userModel.userDeviceToken,
           ));
 

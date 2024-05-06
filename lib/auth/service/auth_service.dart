@@ -6,13 +6,12 @@ import 'package:sanitary_mart/profile/service/user_firebase_service.dart';
 
 class AuthService {
 
-  Future<UserModel?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount!.authentication;
-
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication.accessToken,
       idToken: googleSignInAuthentication.idToken,
@@ -20,23 +19,8 @@ class AuthService {
 
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-    final User? user = userCredential.user;
-    if (user != null) {
-      UserFirebaseService firebaseAuthService = Get.find();
-      String? token = await firebaseAuthService.getFirebaseToken();
-      UserModel userModel = UserModel(
-        uId: user.uid,
-        userName: user.displayName.toString(),
-        email: user.email.toString(),
-        phone: user.phoneNumber.toString(),
-        userDeviceToken: token ?? '',
-        isAdmin: false,
-        isActive: true,
-        createdOn: DateTime.now(),
-      );
-      await firebaseAuthService.saveUser(userModel);
-      return userModel;
-    }
+    return userCredential.user;
+
   }
 
   Future googleSignOut()async {

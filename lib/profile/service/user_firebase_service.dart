@@ -5,9 +5,20 @@ import 'package:sanitary_mart/auth/model/user_model.dart';
 
 class UserFirebaseService {
   Future saveUser(UserModel userModel) async {
-    await FirebaseFirestore.instance.collection('users').doc(userModel.uId).set(
-          userModel.toJson(),
-        );
+    final map = userModel.toJson();
+    map.removeWhere((key, value) => value == null);
+    final docRef =
+        FirebaseFirestore.instance.collection('users').doc(userModel.uId);
+    DocumentSnapshot documentSnapshot = await docRef.get();
+    if (documentSnapshot.exists) {
+      docRef.update(
+        map,
+      );
+    } else {
+      await docRef.set(
+        map,
+      );
+    }
   }
 
   Future<UserModel?> getLoggedUser() async {
@@ -20,7 +31,7 @@ class UserFirebaseService {
             documentSnapshot.data() as Map<String, dynamic>);
       }
     }
-    throw 'User not found';
+    return null;
   }
 
   Future<String?> getFirebaseToken() async {
@@ -36,6 +47,19 @@ class UserFirebaseService {
           .collection('users')
           .doc(user.uid)
           .update({'userDeviceToken': token});
+    }
+  }
+
+  Future updateUserDetail({String? phone, String? address}) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'phone': phone,
+        'address': address,
+      });
     }
   }
 }

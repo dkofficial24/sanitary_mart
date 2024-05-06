@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/auth/screen/login_screen.dart';
 import 'package:sanitary_mart/auth/screen/otp_screen.dart';
+import 'package:sanitary_mart/auth/screen/user_detail_screen.dart';
 import 'package:sanitary_mart/auth/service/auth_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/constant/constant.dart';
@@ -112,9 +113,20 @@ class AuthenticationProvider extends ChangeNotifier {
     try {
       isError = false;
       showLoader();
-      _userModel = await authService.signInWithGoogle();
-      FirebaseAnalytics.instance.setUserId(id: _userModel?.uId);
-      openDashboardScreen();
+      User? user = await authService.signInWithGoogle();
+      if (user != null) {
+        await saveUserDetail(user);
+        FirebaseAnalytics.instance.setUserId(id: _userModel?.uId);
+        UserFirebaseService firebaseAuthService = Get.find();
+        UserModel? alreadyUser = await firebaseAuthService.getLoggedUser();
+        if (alreadyUser != null &&
+            (alreadyUser.phone?.isNotEmpty ?? false) &&
+            (alreadyUser.address?.isNotEmpty ?? false)) {
+          openDashboardScreen();
+        } else {
+          openUserDetailScreen();
+        }
+      }
     } catch (e) {
       isError = true;
       notifyListeners();
@@ -122,6 +134,29 @@ class AuthenticationProvider extends ChangeNotifier {
     } finally {
       hideLoader();
     }
+  }
+
+  void openUserDetailScreen() {
+    Get.to(const UserDetailsScreen());
+  }
+
+  Future<void> saveUserDetail(
+    User user,
+  ) async {
+    isError = false;
+    UserFirebaseService firebaseAuthService = Get.find();
+    String? token = await firebaseAuthService.getFirebaseToken();
+    UserModel userModel = UserModel(
+      uId: user.uid,
+      userName: user.displayName.toString(),
+      email: user.email.toString(),
+      phone: user.phoneNumber,
+      userDeviceToken: token ?? '',
+      isAdmin: false,
+      isActive: true,
+      createdOn: DateTime.now(),
+    );
+    await firebaseAuthService.saveUser(userModel);
   }
 
   Future googleSignOut() async {
@@ -144,12 +179,26 @@ class AuthenticationProvider extends ChangeNotifier {
 
   Future loadFirebaseToken() async {
     try {
+      isError = false;
       UserFirebaseService authFirebaseService = Get.find();
       deviceToken = await authFirebaseService.getFirebaseToken();
       if (deviceToken != null) {
         authFirebaseService.updateFirebaseToken(token: deviceToken!);
       }
     } catch (e) {
+      isError = true;
+      Log.e(e);
+    }
+  }
+
+  Future updateUserDetail({String? phone, String? address}) async {
+    try {
+      isError = false;
+      UserFirebaseService authFirebaseService = Get.find();
+      await authFirebaseService.updateUserDetail(
+          phone: phone, address: address);
+    } catch (e) {
+      isError = true;
       Log.e(e);
     }
   }
@@ -158,7 +207,7 @@ class AuthenticationProvider extends ChangeNotifier {
     return FirebaseAuth.instance.currentUser?.uid;
   }
 
-  bool isLoggedIn(){
-    return FirebaseAuth.instance.currentUser!=null;
+  bool isLoggedIn() {
+    return FirebaseAuth.instance.currentUser != null;
   }
 }

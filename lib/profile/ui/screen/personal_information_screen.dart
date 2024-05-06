@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
-import 'package:sanitary_mart/profile/ui/screen/edit_personal_information_screen.dart';
 
 class PersonalInfoScreen extends StatelessWidget {
   const PersonalInfoScreen({Key? key}) : super(key: key);
@@ -46,15 +45,20 @@ class PersonalInfoScreen extends StatelessWidget {
                   title: const Text('Full Name'),
                   subtitle: Text(userModel.userName),
                 ),
-                const ListTile(
-                  leading: Icon(Icons.phone),
-                  title: Text('Mobile Number'),
-                  subtitle: Text('-'),
+                ListTile(
+                  leading: const Icon(Icons.phone),
+                  title: const Text('Mobile Number'),
+                  subtitle: Text(userModel.phone??'-'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.email),
                   title: const Text('Email'),
                   subtitle: Text(userModel.email),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.email),
+                  title: const Text('Address'),
+                  subtitle: Text(userModel.address ?? '-'),
                 ),
               ],
             );

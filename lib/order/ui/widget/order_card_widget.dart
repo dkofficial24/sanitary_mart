@@ -25,7 +25,7 @@ class OrderCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Shri Balaji Sanitary & Electronics',
+                  'Shri Balaji Sanitary & Electric',
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -33,7 +33,10 @@ class OrderCard extends StatelessWidget {
                 ),
                 IconButton(onPressed: (){
                   shareOrderAsPdf(context,order);
-                }, icon: Icon(Icons.share))
+                }, icon: Icon(Icons.share)),
+                IconButton(onPressed: (){
+                  downloadOrderAsPdf(context,order);
+                }, icon: Icon(Icons.download))
               ],
             ),
             const Text(
