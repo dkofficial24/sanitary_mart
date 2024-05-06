@@ -56,6 +56,6 @@ jobs:
 
       - name: Distribute Android Beta App
         working-directory: ${{ github.workspace }}/android
-        run: bundle exec fastlane distribute_android_app
+        run: bundle exec fastlane android deploy_to_firebase
         env:
           FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
