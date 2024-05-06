@@ -34,7 +34,6 @@ jobs:
         run: flutter pub get
 
       - name: Decode Keystore
-        if: !fileExists('${{ github.workspace }}/android/app.jks')
         run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ${{ github.workspace }}/android/app.jks
 
       - name: Set up key.properties
