@@ -13,21 +13,23 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
+         distribution: 'zulu'
+         cache: gradel'
 
-      - name: Cache Flutter SDK
-        uses: actions/cache@v2
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}
 
-      - name: Cache Android Gems
-        uses: actions/cache@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          flutter-version: '3.16.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Android Gems
+        working-directory: ${{ github.workspace }}/android
+        run: bundle install
 
       - name: Flutter get
         working-directory: ${{ github.workspace }}
@@ -46,7 +48,6 @@ jobs:
           PROPERTIES_PATH: "${{ github.workspace }}/android/key.properties"
 
       - name: Build APK
-        if: github.event_name == 'push'
         working-directory: ${{ github.workspace }}
         run: flutter build apk
 
@@ -58,7 +59,6 @@ jobs:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
 
       - name: Distribute Android Beta App
-        if: github.event_name == 'push'
         working-directory: ${{ github.workspace }}/android
         run: bundle exec fastlane android deploy_to_firebase
         env:
