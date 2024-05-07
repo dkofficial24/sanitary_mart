@@ -18,7 +18,7 @@ platform :android do
       release_notes: releaseConfig['release_note'],
       firebase_cli_path: "/usr/local/bin/firebase",
       service_credentials_file: "firebase_credentials.json",
-      firebase_cli_token: "0gVbHsYzWP4XeCgYIARAAGBASNwF-L9IrNo_gIYn7PTGWWJZ7hn_kj1Yo1ak-sCUlsgzc84rYnGte9ATCjczRnWbpecrvtuo6xQY",
+      firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
     )
   end
 end
