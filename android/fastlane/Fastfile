@@ -11,14 +11,14 @@ platform :android do
   )
 
   lane :deploy_to_firebase do
-  sh("firebase login:ci --token '#{ENV['FIREBASE_TOKEN']}'")
     firebase_app_distribution(
       app: config['firebase_app_id'],
       apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
       testers: config['testers_email'],
-      release_notes: releaseConfig['release_note'], # Corrected here
+      release_notes: releaseConfig['release_note'],
       firebase_cli_path: "/usr/local/bin/firebase",
-      service_credentials_file: "firebase_credentials.json"
+      service_credentials_file: "firebase_credentials.json",
+      firebase_cli_token: "0gVbHsYzWP4XeCgYIARAAGBASNwF-L9IrNo_gIYn7PTGWWJZ7hn_kj1Yo1ak-sCUlsgzc84rYnGte9ATCjczRnWbpecrvtuo6xQY",
     )
   end
 end
