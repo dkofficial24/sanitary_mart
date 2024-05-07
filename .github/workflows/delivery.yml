@@ -56,8 +56,8 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: flutter build apk
 
-      - name: Authenticate Firebase CLI
-        run: firebase login:ci --token '${{ secrets.FIREBASE_TOKEN }}'
+#      - name: Authenticate Firebase CLI
+#        run: firebase login:ci --token '${{ secrets.FIREBASE_TOKEN }}'
 
       - name: Create Firebase Service Credentials file
         run: |
