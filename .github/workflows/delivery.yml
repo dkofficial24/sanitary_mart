@@ -37,6 +37,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
+          distribution: 'adopt'
+          architecture: 'x64'
           cache: 'gradle'
 
       - name: Cache Flutter SDK installation
