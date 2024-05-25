@@ -10,10 +10,12 @@ class ProductProvider extends ChangeNotifier {
 
   List<Product> _products = [];
   final List<String> _categories = [];
+  List<Product> _filteredProducts = [];
 
   List<Product> get products => _products;
-
   List<String> get categories => _categories;
+  List<Product> get filteredProducts => _filteredProducts;
+
   ProviderState _state = ProviderState.idle;
   ProviderState get state => _state;
 
@@ -23,12 +25,25 @@ class ProductProvider extends ChangeNotifier {
       _products.clear();
       notifyListeners();
       _products =
-          await productService.fetchProductsByBrand(categoryId, brandId);
+      await productService.fetchProductsByBrand(categoryId, brandId);
+      _filteredProducts = _products;
       _state = ProviderState.idle;
     } catch (e) {
       _state = ProviderState.error;
     } finally {
       notifyListeners();
     }
+  }
+
+  void searchProducts(String query) {
+    if (query.isEmpty) {
+      _filteredProducts = _products;
+    } else {
+      _filteredProducts = _products
+          .where((product) =>
+          product.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 }

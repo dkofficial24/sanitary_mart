@@ -9,12 +9,15 @@ class CategoryProvider extends ChangeNotifier {
   CategoryProvider(this.firebaseService);
 
   List<Category> _categoryList = [];
+  List<Category> _filteredCategoryList = [];
   ProviderState _state = ProviderState.idle;
   ProviderState get state => _state;
 
   String? _error;
 
   List<Category> get categoryList => _categoryList;
+
+  List<Category> get filteredCategoryList => _filteredCategoryList;
 
   String? get error => _error;
 
@@ -23,6 +26,7 @@ class CategoryProvider extends ChangeNotifier {
       _state = ProviderState.loading;
       notifyListeners();
       _categoryList = await firebaseService.getCategories();
+      _filteredCategoryList = _categoryList;
       _state = ProviderState.idle;
     } catch (e) {
       _error = 'Failed to fetch items: $e';
@@ -30,5 +34,17 @@ class CategoryProvider extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  void filterCategories(String query) {
+    if (query.isEmpty) {
+      _filteredCategoryList = _categoryList;
+    } else {
+      _filteredCategoryList = _categoryList
+          .where((category) =>
+          category.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 }

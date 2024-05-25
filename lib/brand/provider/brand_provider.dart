@@ -18,6 +18,7 @@ class BrandProvider extends ChangeNotifier {
   ProviderState get state => _state;
 
   String? get error => _error;
+  List<Brand> filteredBrandList = [];
 
 
   Future<void> getBrandsByCategory(String categoryId) async {
@@ -27,7 +28,7 @@ class BrandProvider extends ChangeNotifier {
       notifyListeners();
 
       _brandList = await firebaseService.getBrandsByCategory(categoryId);
-
+      filteredBrandList = _brandList;
       _state = ProviderState.idle;
     } catch (e) {
       _error = 'Failed to fetch items: $e';
@@ -35,6 +36,18 @@ class BrandProvider extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  void filterBrands(String query) {
+    if (query.isEmpty) {
+      filteredBrandList = _brandList;
+    } else {
+      filteredBrandList = _brandList
+          .where((category) =>
+          category.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 
 }
