@@ -21,7 +21,7 @@ platform :android do
       testers: config['testers_email'],
       release_notes: releaseConfig['release_note'],
       firebase_cli_path: "/usr/local/bin/firebase",
-#       service_credentials_file: "firebase_credentials.json",
+      service_credentials_file: "firebase_credentials.json",
       firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
     )
   end
