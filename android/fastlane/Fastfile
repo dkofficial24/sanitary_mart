@@ -4,23 +4,41 @@ releaseConfig = YAML.load_file('release_notes.yml')
 config = YAML.load_file('config.yml')
 
 platform :android do
-  desc "Android Firebase App Distribution Prod"
-  gradle(
-    task: 'assemble',
-    build_type: 'Release'
-  )
+  desc "Build APK"
+  lane :build_apk do
+    gradle(
+      task: 'assemble',
+      build_type: 'Release'
+    )
+  end
 
+  desc "Deploy to Firebase App Distribution from GitAction"
   lane :deploy_to_firebase do
+    build_apk
     firebase_app_distribution(
       app: config['firebase_app_id'],
       apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
       testers: config['testers_email'],
       release_notes: releaseConfig['release_note'],
       firebase_cli_path: "/usr/local/bin/firebase",
-      service_credentials_file: "firebase_credentials.json",
+#       service_credentials_file: "firebase_credentials.json",
       firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
     )
   end
+
+  desc "Deploy to Firebase App Distribution from Terminal"
+    lane :firebase_dist do
+      build_apk
+      firebase_app_distribution(
+        app: config['firebase_app_id'],
+        apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
+        testers: config['testers_email'],
+        release_notes: releaseConfig['release_note'],
+        firebase_cli_path: "/usr/local/bin/firebase",
+  #       service_credentials_file: "firebase_credentials.json",
+        firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
+      )
+    end
 
   lane :deploy_to_play_store_internal do
       upload_to_play_store(

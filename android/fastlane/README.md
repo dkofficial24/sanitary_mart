@@ -15,13 +15,29 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
+### android build_apk
+
+```sh
+[bundle exec] fastlane android build_apk
+```
+
+Build APK
+
 ### android deploy_to_firebase
 
 ```sh
 [bundle exec] fastlane android deploy_to_firebase
 ```
 
-Android Firebase App Distribution Prod
+Deploy to Firebase App Distribution from GitAction
+
+### android firebase_dist
+
+```sh
+[bundle exec] fastlane android firebase_dist
+```
+
+Deploy to Firebase App Distribution from Terminal
 
 ### android deploy_to_play_store_internal
 
