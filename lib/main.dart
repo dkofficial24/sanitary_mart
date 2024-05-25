@@ -14,16 +14,20 @@ import 'package:sanitary_mart/cart/provider/cart_provider.dart';
 import 'package:sanitary_mart/cart/service/cart_service.dart';
 import 'package:sanitary_mart/category/provider/category_provider.dart';
 import 'package:sanitary_mart/category/service/category_firebase_service.dart';
-import 'package:sanitary_mart/core/constant/constant.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
 import 'package:sanitary_mart/firebase_options.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
+import 'package:sanitary_mart/payment/provider/payment_info_provider.dart';
+import 'package:sanitary_mart/payment/service/payment_firebase_service.dart';
+import 'package:sanitary_mart/payment/service/payment_service.dart';
 import 'package:sanitary_mart/product/provider/product_provider.dart';
 import 'package:sanitary_mart/product/service/product_service.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
 import 'package:sanitary_mart/profile/service/user_firebase_service.dart';
 import 'package:sanitary_mart/util/storage_helper.dart';
+
+import 'core/constant/constant.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,6 +62,8 @@ class VendorApp extends StatelessWidget {
     Get.put(UserFirebaseService());
     Get.put(CartFirebaseService());
     Get.put(OrderService());
+    Get.put(PaymentFirebaseService());
+    Get.put(PaymentService());
 
     final authProvider = AuthenticationProvider(
       authService: AuthService(),
@@ -94,6 +100,9 @@ class VendorApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => OrderProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PaymentInfoProvider()..fetchPaymentInfo(),
         ),
       ],
       child: Consumer<AuthenticationProvider>(
