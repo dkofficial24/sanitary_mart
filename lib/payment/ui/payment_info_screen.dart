@@ -111,12 +111,27 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
             ],
           ),
           floatingActionButton: provider.paymentInfo != null
-              ? FloatingActionButton(
-                  onPressed: () {
-                    provider.sharePaymentInfo(provider.paymentInfo!);
-                  },
-                  child: const Icon(Icons.share),
-                )
+              ? Column(
+
+            mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'share_tag',
+                      onPressed: () {
+                        provider.sharePaymentInfo(provider.paymentInfo!);
+                      },
+                      child: const Icon(Icons.share),
+                    ),
+                  const SizedBox(height: 20,),
+                  FloatingActionButton(
+                    heroTag: 'proceed_tag',
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: const Icon(Icons.arrow_forward_ios),
+                    ),
+                ],
+              )
               : null,
           body: widget,
         );
