@@ -1,10 +1,8 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
-import 'package:sanitary_mart/auth/screen/user_detail_screen.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/provider/cart_provider.dart';
 import 'package:sanitary_mart/core/app_util.dart';
@@ -12,7 +10,9 @@ import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/core/widget/translucent_overlay_loader.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
+import 'package:sanitary_mart/profile/model/update_user_model.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
+import 'package:sanitary_mart/profile/ui/screen/update_user_detail_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
   CheckoutScreen({super.key, required this.cartItems});
@@ -259,7 +259,9 @@ class CheckoutScreen extends StatelessWidget {
 
     if (userModel != null) {
       if (userModel.phone == null) {
-        Get.to(const UserDetailsScreen());
+        Get.to(UpdateUserDetailsScreen(
+          updateUserModel: UpdateUserModel.fromUserModel(userModel),
+        ));
       } else {
         checkoutProvider.placeOrder(cartItems: cartItems, userModel: userModel);
       }
