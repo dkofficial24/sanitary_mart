@@ -8,6 +8,7 @@ import 'package:sanitary_mart/auth/screen/login_screen.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
 import 'package:sanitary_mart/order/ui/order_screen.dart';
+import 'package:sanitary_mart/payment/ui/payment_info_screen.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
 import 'package:sanitary_mart/profile/ui/screen/about_us.dart';
 import 'package:sanitary_mart/profile/ui/screen/address_list_screen.dart';
@@ -58,6 +59,14 @@ class UserProfileTab extends StatelessWidget {
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               Get.to(const AboutUsScreen());
+            },
+          ),ListTile(
+            leading: const Icon(Icons.payments),
+            title: const Text('Payment'),
+            subtitle: const Text('Payment details'),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Get.to(const PaymentInfoScreen());
             },
           ),
           ListTile(
