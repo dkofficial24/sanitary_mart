@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
@@ -19,7 +20,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _fetchUserData();
+    });
   }
 
   Future<void> _fetchUserData() async {
