@@ -22,10 +22,36 @@ class AppUtil {
     );
   }
 
+  static void showWarningToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.amberAccent,
+      textColor: Colors.black,
+    );
+  }
+
+  static void showErrorToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  }
+
+  static void showPositiveToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.white,
+      textColor: Colors.green,
+    );
+  }
+
   static String generateOrderId() {
     DateTime now = DateTime.now();
-    int randomNumber = Random().nextInt(99999);
-    return '${now.microsecondsSinceEpoch}_$randomNumber';
+    return '${now.microsecondsSinceEpoch}';
   }
 
   static String convertTimestampInDate(int timestamp) {

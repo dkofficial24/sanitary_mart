@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:intl/intl.dart';
+import 'package:sanitary_mart/core/widget/copy_button_widget.dart';
 import 'package:sanitary_mart/order/model/order_model.dart';
 import 'package:sanitary_mart/order/model/order_status.dart';
 import 'package:sanitary_mart/order/ui/widget/order_as_pdf.dart';
@@ -31,12 +32,16 @@ class OrderCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(onPressed: (){
-                  shareOrderAsPdf(context,order);
-                }, icon: Icon(Icons.share)),
-                IconButton(onPressed: (){
-                  downloadOrderAsPdf(context,order);
-                }, icon: Icon(Icons.download))
+                IconButton(
+                    onPressed: () {
+                      shareOrderAsPdf(context, order);
+                    },
+                    icon: const Icon(Icons.share)),
+                IconButton(
+                    onPressed: () {
+                      downloadOrderAsPdf(context, order);
+                    },
+                    icon: const Icon(Icons.download))
               ],
             ),
             const Text(
@@ -52,12 +57,17 @@ class OrderCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              'Order ID: ${order.orderId}',
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Text(
+                  'Order ID: ${order.orderId}',
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                CopyIconButton(order.orderId)
+              ],
             ),
             Text('Date: ${_formatDate(order.createdAt)}'),
             const SizedBox(height: 10),
@@ -82,17 +92,24 @@ class OrderCard extends StatelessWidget {
               dataRowMaxHeight: 65,
               columns: const [
                 // DataColumn(label: Text('Sr')),
-                DataColumn(label: SizedBox(child: Text('Items'))),
+                DataColumn(
+                  label: SizedBox(child: Text('Items')),
+                ),
                 DataColumn(
                   label: Text('Qty'),
                 ),
                 DataColumn(
                   label: Text('Price'),
                 ),
+                DataColumn(
+                  label: Text('Total'),
+                ),
               ],
               rows: order.orderItems.map((item) {
-                total += item.price * item.quantity;
+                double itemTotal = item.price * item.quantity;
+                total += itemTotal;
                 discount += item.discountAmount * item.quantity;
+
                 return DataRow(
                   cells: [
                     // DataCell(Text(
@@ -106,6 +123,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     DataCell(Text(item.quantity.toString())),
                     DataCell(Text((item.price).toStringAsFixed(2))),
+                    DataCell(Text((itemTotal.toStringAsFixed(2)))),
                   ],
                 );
               }).toList(),

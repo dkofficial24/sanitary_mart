@@ -140,7 +140,7 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future openUserDetailScreen(UserModel userModel) async {
-    bool success = await Get.off(UpdateUserDetailsScreen(
+    bool success = await Get.to(UpdateUserDetailsScreen(
       updateUserModel: UpdateUserModel.fromUserModel(userModel),
     ));
     if (success) {

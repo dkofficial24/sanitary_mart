@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
+import 'package:sanitary_mart/core/widget/copy_button_widget.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
 import 'package:sanitary_mart/payment/provider/payment_info_provider.dart';
@@ -91,7 +92,12 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
                     const Text('UPI Id',
                         style: TextStyle(
                             fontWeight: FontWeight.bold)), // Bold label
-                    Text(provider.paymentInfo?.upiId ?? 'Not Available'),
+                    Row(
+                      children: [
+                        CopyIconButton(provider.paymentInfo!.upiId.toString()),
+                        Text(provider.paymentInfo?.upiId ?? 'Not Available'),
+                      ],
+                    )
                   ],
                 ),
                if(widget.totalPayable!=null) Padding(

@@ -52,7 +52,7 @@ class UserProvider extends ChangeNotifier {
       await userFirebaseService.updateUserDetail(updateUserRequest);
       providerState = ProviderState.idle;
       await loadUserModel();
-      AppUtil.showToast('User details updated successfully');
+      AppUtil.showPositiveToast('User details updated successfully');
     } catch (e) {
       AppUtil.showToast('Unable to update user details',isError: true);
       providerState = ProviderState.error;

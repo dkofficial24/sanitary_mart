@@ -183,7 +183,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
   void onMaxQtyOverflow() {
     _quantity = 999;
     _quantityController.text = '999';
-    AppUtil.showToast('999 max quantity allowed');
+    AppUtil.showWarningToast('999 max quantity allowed');
   }
 
   String? getUserId() {
@@ -198,7 +198,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
     }
 
     if (_quantity == 0) {
-      AppUtil.showToast('Quantity value can not be empty');
+      AppUtil.showWarningToast('Quantity value can not be empty');
       return;
     }
 

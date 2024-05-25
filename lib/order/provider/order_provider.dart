@@ -32,7 +32,7 @@ class OrderProvider extends ChangeNotifier {
       var totalPayable = 0.0;
       for (int i = 0; i < cartItems.length; i++) {
         orderItems.add(OrderItem.fromCartItem(cartItems[i]));
-        totalPayable += cartItems[i].price;
+        totalPayable += (cartItems[i].price*cartItems[i].quantity);
       }
       String orderId = AppUtil.generateOrderId();
 
@@ -53,7 +53,7 @@ class OrderProvider extends ChangeNotifier {
 
       await Get.find<OrderService>().placeOrder(order);
       await Get.find<CartFirebaseService>().clearFullCart(order.customer!.uId);
-      AppUtil.showToast('Order placed successfully !');
+      AppUtil.showPositiveToast('Order placed successfully !');
       _state = ProviderState.idle;
       FirebaseAnalytics.instance.logEvent(name: 'order_placed');
       await Get.find<OrderService>().fetchUserOrders(order.customer!.uId);

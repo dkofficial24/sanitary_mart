@@ -68,7 +68,7 @@ class CartProvider extends ChangeNotifier {
     final index = _cartItems.indexWhere((item) => item.productId == productId);
     if (index != -1) {
       _cartItems.removeAt(index);
-      AppUtil.showToast('Item removed from cart');
+      AppUtil.showWarningToast('Item removed from cart');
       notifyListeners();
       FirebaseAnalytics.instance.logEvent(name: 'remove_from_cart');
     }

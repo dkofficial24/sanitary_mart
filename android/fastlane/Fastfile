@@ -21,4 +21,13 @@ platform :android do
       firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
     )
   end
+
+  lane :deploy_to_play_store_internal do
+      upload_to_play_store(
+        track: 'internal', # Change to 'alpha', 'beta', 'internal', or 'production'
+        aab: "app/release/app-release.aab",
+        package_name: config['android_package_name'],
+        release_status: 'draft', # Change to 'draft' or 'completed'
+      )
+end
 end
