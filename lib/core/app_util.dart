@@ -1,11 +1,25 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 class AppUtil {
-  static void showToast(String message) {
-    Fluttertoast.showToast(msg: message, gravity: ToastGravity.CENTER);
+  static void showToast(String message, {bool isError = false}) {
+    Color? bgColor;
+    Color? textColor;
+
+    if (isError) {
+      bgColor = Colors.red;
+      textColor = Colors.white;
+    }
+
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: bgColor,
+      textColor: textColor,
+    );
   }
 
   static String generateOrderId() {
