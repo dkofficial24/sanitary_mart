@@ -6,11 +6,16 @@ import 'package:sanitary_mart/payment/model/account_info_model.dart';
 import 'package:share_plus/share_plus.dart';
 
 class PaymentService {
-  void sharePaymentInfo(PaymentInfo paymentInfo) async {
-    const String text = '''
-    Name: paymentInfo.accountHolderName 
-    UPI Id: paymentInfo.upiId 
+  Future sharePaymentInfo(
+      {required PaymentInfo paymentInfo, double? totalPayable}) async {
+    String details = '''
+    Name: ${paymentInfo.accountHolderName}
+    UPI Id: ${paymentInfo.upiId} 
     ''';
+
+    if(totalPayable!=null) {
+      details += 'Total Amount: $totalPayable';
+    }
 
     if (paymentInfo.qrCodeUrl.isNotEmpty) {
       try {
@@ -21,13 +26,13 @@ class PaymentService {
         final file = File('${directory.path}/qr_code.png');
         file.writeAsBytesSync(response.bodyBytes);
 
-        Share.shareXFiles([XFile(file.path)], text: text);
+        Share.shareXFiles([XFile(file.path)], text: details);
       } catch (e) {
         print('Error downloading or sharing the image: $e');
-        Share.share(text);
+        Share.share(details);
       }
     } else {
-      Share.share(text);
+      Share.share(details);
     }
   }
 }

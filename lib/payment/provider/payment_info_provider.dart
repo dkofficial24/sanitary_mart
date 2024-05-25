@@ -1,13 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/payment/model/account_info_model.dart';
 import 'package:sanitary_mart/payment/service/payment_firebase_service.dart';
 import 'package:sanitary_mart/payment/service/payment_service.dart';
-import 'package:share_plus/share_plus.dart';
 
 class PaymentInfoProvider extends ChangeNotifier {
   PaymentInfo? paymentInfo;
@@ -30,8 +26,11 @@ class PaymentInfoProvider extends ChangeNotifier {
     }
   }
 
-  void sharePaymentInfo(PaymentInfo paymentInfo) async {
-    Get.find<PaymentService>().sharePaymentInfo(paymentInfo);
+  void sharePaymentInfo({
+    required PaymentInfo paymentInfo,
+    double? totalPayable,
+  }) async {
+    Get.find<PaymentService>()
+        .sharePaymentInfo(paymentInfo: paymentInfo, totalPayable: totalPayable);
   }
-
 }
