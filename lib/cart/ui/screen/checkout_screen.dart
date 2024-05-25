@@ -267,7 +267,7 @@ class CheckoutScreen extends StatelessWidget {
       }
     } else {
       FirebaseAnalytics.instance.logEvent(name: 'user_not_found');
-      AppUtil.showToast('User not found!');
+      AppUtil.showToast('User not found!',isError: true);
       //  }
     }
   }

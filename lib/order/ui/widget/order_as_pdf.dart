@@ -57,7 +57,7 @@ Future<void> downloadOrderAsPdf(BuildContext context, OrderModel order) async {
   final path = await getExternalDocumentPath();
   final filePath = join(path, 'order_${order.orderId}.pdf');  // Combine path and filename
   if (!await Directory(path).exists()) {
-    AppUtil.showToast('Unable to create folder');
+    AppUtil.showToast('Unable to create folder',isError: true);
     return;
   }
   Uint8List bytes = await pdf.save();

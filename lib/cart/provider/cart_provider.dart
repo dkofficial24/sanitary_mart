@@ -35,7 +35,7 @@ class CartProvider extends ChangeNotifier {
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart');
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong');
+      AppUtil.showToast('Something went wrong',isError: true);
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart_error');
     } finally {
       notifyListeners();

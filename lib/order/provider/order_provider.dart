@@ -65,7 +65,7 @@ class OrderProvider extends ChangeNotifier {
       Get.to(const OrderScreen());
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong!');
+      AppUtil.showToast('Something went wrong!',isError: true);
       FirebaseAnalytics.instance.logEvent(name: 'error_order_placed');
       Log.e(e);
     } finally {

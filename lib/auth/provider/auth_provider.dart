@@ -133,7 +133,7 @@ class AuthenticationProvider extends ChangeNotifier {
     } catch (e) {
       isError = true;
       notifyListeners();
-      AppUtil.showToast(e.toString());
+      AppUtil.showToast(e.toString(),isError: true);
     } finally {
       hideLoader();
     }
@@ -177,7 +177,7 @@ class AuthenticationProvider extends ChangeNotifier {
     } catch (e) {
       isError = true;
       notifyListeners();
-      AppUtil.showToast(e.toString());
+      AppUtil.showToast(e.toString(),isError: true);
       FirebaseAnalytics.instance
           .logEvent(name: 'logout_error', parameters: {'error': e.toString()});
     } finally {
