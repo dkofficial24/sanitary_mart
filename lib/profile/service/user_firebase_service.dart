@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
+import 'package:sanitary_mart/profile/model/update_user_model.dart';
 
 class UserFirebaseService {
-  Future saveUser(UserModel userModel) async {
+  Future saveUserDetails(UserModel userModel) async {
     final map = userModel.toJson();
     map.removeWhere((key, value) => value == null);
     final docRef =
@@ -16,6 +17,19 @@ class UserFirebaseService {
       );
     } else {
       await docRef.set(
+        map,
+      );
+    }
+  }
+
+  Future updateUserDetail(UpdateUserModel userRequest) async {
+    final map = userRequest.toJson();
+    map.removeWhere((key, value) => value == null);
+    final docRef =
+    FirebaseFirestore.instance.collection('users').doc(userRequest.uId);
+    DocumentSnapshot documentSnapshot = await docRef.get();
+    if (documentSnapshot.exists) {
+      docRef.update(
         map,
       );
     }
@@ -50,16 +64,16 @@ class UserFirebaseService {
     }
   }
 
-  Future updateUserDetail({String? phone, String? address}) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update({
-        'phone': phone,
-        'address': address,
-      });
-    }
-  }
+  // Future updateUserDetail({String? phone, String? address}) async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+  //   if (user != null) {
+  //     await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(user.uid)
+  //         .update({
+  //       'phone': phone,
+  //       'address': address,
+  //     });
+  //   }
+  // }
 }

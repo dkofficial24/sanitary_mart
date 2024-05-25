@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sanitary_mart/auth/model/user_model.dart';
-import 'package:sanitary_mart/profile/service/user_firebase_service.dart';
+
 
 class AuthService {
 

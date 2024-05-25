@@ -27,8 +27,8 @@ class UserProfileTab extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Personal Information'),
-            subtitle: const Text('Manage your personal details'),
+            title: const Text('User details'),
+            subtitle: const Text('Manage your details'),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               Get.to(const PersonalInfoScreen());

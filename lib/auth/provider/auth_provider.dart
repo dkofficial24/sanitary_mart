@@ -5,13 +5,14 @@ import 'package:get/get.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/auth/screen/login_screen.dart';
 import 'package:sanitary_mart/auth/screen/otp_screen.dart';
-import 'package:sanitary_mart/auth/screen/user_detail_screen.dart';
 import 'package:sanitary_mart/auth/service/auth_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/constant/constant.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
+import 'package:sanitary_mart/profile/model/update_user_model.dart';
 import 'package:sanitary_mart/profile/service/user_firebase_service.dart';
+import 'package:sanitary_mart/profile/ui/screen/update_user_detail_screen.dart';
 import 'package:sanitary_mart/util/storage_helper.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
@@ -124,7 +125,9 @@ class AuthenticationProvider extends ChangeNotifier {
             (alreadyUser.address?.isNotEmpty ?? false)) {
           openDashboardScreen();
         } else {
-          openUserDetailScreen();
+          if (alreadyUser != null) {
+            openUserDetailScreen(alreadyUser);
+          }
         }
       }
     } catch (e) {
@@ -136,8 +139,13 @@ class AuthenticationProvider extends ChangeNotifier {
     }
   }
 
-  void openUserDetailScreen() {
-    Get.to(const UserDetailsScreen());
+  Future openUserDetailScreen(UserModel userModel) async {
+    bool success = await Get.off(UpdateUserDetailsScreen(
+      updateUserModel: UpdateUserModel.fromUserModel(userModel),
+    ));
+    if (success) {
+      openDashboardScreen();
+    }
   }
 
   Future<void> saveUserDetail(
@@ -156,7 +164,7 @@ class AuthenticationProvider extends ChangeNotifier {
       isActive: true,
       createdOn: DateTime.now(),
     );
-    await firebaseAuthService.saveUser(userModel);
+    await firebaseAuthService.saveUserDetails(userModel);
   }
 
   Future googleSignOut() async {
@@ -185,18 +193,6 @@ class AuthenticationProvider extends ChangeNotifier {
       if (deviceToken != null) {
         authFirebaseService.updateFirebaseToken(token: deviceToken!);
       }
-    } catch (e) {
-      isError = true;
-      Log.e(e);
-    }
-  }
-
-  Future updateUserDetail({String? phone, String? address}) async {
-    try {
-      isError = false;
-      UserFirebaseService authFirebaseService = Get.find();
-      await authFirebaseService.updateUserDetail(
-          phone: phone, address: address);
     } catch (e) {
       isError = true;
       Log.e(e);
