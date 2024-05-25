@@ -13,6 +13,7 @@ import 'package:sanitary_mart/order/model/order_model.dart';
 import 'package:sanitary_mart/order/model/order_status.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
 import 'package:sanitary_mart/order/ui/order_screen.dart';
+import 'package:sanitary_mart/payment/ui/payment_info_screen.dart';
 
 class OrderProvider extends ChangeNotifier {
   ProviderState _state = ProviderState.idle;
@@ -55,6 +56,7 @@ class OrderProvider extends ChangeNotifier {
       FirebaseAnalytics.instance.logEvent(name: 'order_placed');
       await Get.find<OrderService>().fetchUserOrders(order.customer!.uId);
       _state = ProviderState.idle;
+      await Get.to(const PaymentInfoScreen());
       Get.offAll(const DashboardScreen());
       Get.to(const OrderScreen());
     } catch (e) {
