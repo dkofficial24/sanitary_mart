@@ -28,7 +28,7 @@ class OrderCard extends StatelessWidget {
                 const Text(
                   'Shri Balaji Sanitary & Electric',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -47,13 +47,13 @@ class OrderCard extends StatelessWidget {
             const Text(
               'Bhiwani Road, Bahal',
               style: TextStyle(
-                fontSize: 16.0,
+                fontSize: 14.0,
               ),
             ),
             const Text(
               'Phone: 9555294879',
               style: TextStyle(
-                fontSize: 16.0,
+                fontSize: 14.0,
               ),
             ),
             const SizedBox(height: 10),
@@ -62,7 +62,7 @@ class OrderCard extends StatelessWidget {
                 Text(
                   'Order ID: ${order.orderId}',
                   style: const TextStyle(
-                    fontSize: 16.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -74,13 +74,13 @@ class OrderCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Status:', style: TextStyle(fontSize: 16.0)),
+                const Text('Status:', style: TextStyle(fontSize: 14.0)),
                 Text(
                   '${order.orderStatus.name.capitalize}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: getStatusColor(order.orderStatus),
-                    fontSize: 16.0,
+                    fontSize: 14.0,
                   ),
                 ),
               ],
@@ -137,10 +137,10 @@ class OrderCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Total:', style: TextStyle(fontSize: 16.0)),
+                      const Text('Total:', style: TextStyle(fontSize: 14.0)),
                       Text(
                         total.toStringAsFixed(2),
-                        style: const TextStyle(fontSize: 16.0),
+                        style: const TextStyle(fontSize: 14.0),
                       ),
                     ],
                   ),
@@ -151,7 +151,7 @@ class OrderCard extends StatelessWidget {
                         const Text(
                           'Points:',
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 14.0,
                             color: Colors.green,
                           ),
                         ),
