@@ -56,6 +56,7 @@ class Customer {
   String email;
   String phone;
   String userDeviceToken;
+  String? address;
 
   Customer({
     required this.uId,
@@ -63,6 +64,7 @@ class Customer {
     required this.email,
     required this.phone,
     required this.userDeviceToken,
+    this.address,
   });
 
   Map<String, dynamic> toJson() {
@@ -72,6 +74,7 @@ class Customer {
       'email': email,
       'phone': phone,
       'userDeviceToken': userDeviceToken,
+      'address': address,
     };
   }
 
@@ -82,6 +85,7 @@ class Customer {
       email: json['email'],
       phone: json['phone'],
       userDeviceToken: json['userDeviceToken'],
+      address: json['address'],
     );
   }
 }
