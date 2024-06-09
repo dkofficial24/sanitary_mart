@@ -1,5 +1,6 @@
 require 'yaml'
 
+
 class Properties < Hash
   def initialize(file)
     if File.exist?(file)
@@ -19,11 +20,7 @@ class Properties < Hash
   end
 end
 
-releaseConfig = YAML.load_file('release_notes.yml')
-config = YAML.load_file('config.yml')
-
-platform :android do
-    desc "Increment version code in local.properties"
+      desc "Increment version code in local.properties"
       lane :increment_version_code do
         # Determine the path to the local.properties file
         local_properties_path = File.join(File.dirname(__FILE__), "../local.properties")
@@ -42,50 +39,35 @@ platform :android do
         UI.message("Version code updated from #{current_version_code} to #{new_version_code}")
       end
 
-  desc "Build APK"
-  lane :build_apk do
+releaseConfig = YAML.load_file('release_notes.yml')
+config = YAML.load_file('config.yml')
+
+platform :android do
+  desc "Android Firebase App Distribution Prod"
+  
+  # Lane to build the release APK
+  lane :build_release_apk do
     gradle(
       task: 'assemble',
       build_type: 'Release'
     )
   end
 
-  desc "Deploy to Firebase App Distribution from GitAction"
+  # Lane to deploy the APK to Firebase
   lane :deploy_to_firebase do
-#     build_apk
     firebase_app_distribution(
       app: config['firebase_app_id'],
-      apk_path: "../build/app/outputs/bundle/release/app-release.aab",
+      apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
       testers: config['testers_email'],
       release_notes: releaseConfig['release_note'],
-      firebase_cli_path: "/usr/local/bin/firebase",
-      service_credentials_file: "firebase_credentials.json",
-      firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
+      firebase_cli_path: "/usr/local/bin/firebase"
     )
   end
 
-  desc "Deploy to Firebase App Distribution from Terminal"
-    lane :firebase_dist do
-      increment_version_code
-      build_apk
-      firebase_app_distribution(
-        app: config['firebase_app_id'],
-        apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
-#         apk_path: "../build/app/outputs/bundle/release/app-release.aab",
-        testers: config['testers_email'],
-        release_notes: releaseConfig['release_note'],
-        firebase_cli_path: "/usr/local/bin/firebase",
-  #       service_credentials_file: "firebase_credentials.json",
-        firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
-      )
-    end
-
-  lane :deploy_to_play_store_internal do
-      upload_to_play_store(
-        track: 'internal', # Change to 'alpha', 'beta', 'internal', or 'production'
-        aab: "app/release/app-release.aab",
-        package_name: config['android_package_name'],
-        release_status: 'draft', # Change to 'draft' or 'completed'
-      )
-end
+  # Combined lane to build and deploy the APK
+  lane :build_and_deploy do
+    increment_version_code
+    build_release_apk
+    deploy_to_firebase
+  end
 end

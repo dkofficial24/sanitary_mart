@@ -13,15 +13,26 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
-## Android
-
-### android build_apk
+### increment_version_code
 
 ```sh
-[bundle exec] fastlane android build_apk
+[bundle exec] fastlane increment_version_code
 ```
 
-Build APK
+Increment version code in local.properties
+
+----
+
+
+## Android
+
+### android build_release_apk
+
+```sh
+[bundle exec] fastlane android build_release_apk
+```
+
+Android Firebase App Distribution Prod
 
 ### android deploy_to_firebase
 
@@ -29,20 +40,12 @@ Build APK
 [bundle exec] fastlane android deploy_to_firebase
 ```
 
-Deploy to Firebase App Distribution from GitAction
 
-### android firebase_dist
 
-```sh
-[bundle exec] fastlane android firebase_dist
-```
-
-Deploy to Firebase App Distribution from Terminal
-
-### android deploy_to_play_store_internal
+### android build_and_deploy
 
 ```sh
-[bundle exec] fastlane android deploy_to_play_store_internal
+[bundle exec] fastlane android build_and_deploy
 ```
 
 
