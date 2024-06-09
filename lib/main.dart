@@ -11,7 +11,7 @@ import 'package:sanitary_mart/auth/service/auth_service.dart';
 import 'package:sanitary_mart/brand/provider/brand_provider.dart';
 import 'package:sanitary_mart/brand/service/brand_firebase_service.dart';
 import 'package:sanitary_mart/cart/provider/cart_provider.dart';
-import 'package:sanitary_mart/cart/service/cart_service.dart';
+import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/category/provider/category_provider.dart';
 import 'package:sanitary_mart/category/service/category_firebase_service.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
-import 'package:sanitary_mart/cart/service/cart_service.dart';
+import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/core/provider_state.dart';

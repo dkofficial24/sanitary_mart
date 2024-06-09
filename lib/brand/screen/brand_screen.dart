@@ -100,7 +100,7 @@ class _BrandScreenState extends State<BrandScreen> {
                         name: brand.name,
                         image: brand.imagePath ?? '',
                         onItemTap: () {
-                          Get.off(ProductListScreen(
+                          Get.to(ProductListScreen(
                             categoryId: widget.categoryId,
                             brandId: brand.id!,
                             brandName: brand.name,

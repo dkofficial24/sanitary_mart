@@ -116,7 +116,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       final Product product = provider.filteredProducts[index];
                       return InkWell(
                         onTap: () {
-                          Get.off(ProductDetailPage(
+                          Get.to(ProductDetailPage(
                             product: product,
                             brandName: widget.brandName,
                           ));
@@ -137,11 +137,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.network(
-                                product.image ?? '',
-                                height: 80,
-                                width: 80,
-                                fit: BoxFit.contain,
+                              SizedBox(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  child: NetworkImageWidget(
+                                    product.image ?? '',
+                                     imgHeight: 50,
+                                  ),
+                                ),
+                                height: 100,width: 100,
                               ),
                               const SizedBox(height: 8),
                               Text(
