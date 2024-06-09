@@ -126,6 +126,7 @@ class AuthenticationProvider extends ChangeNotifier {
           openDashboardScreen();
         } else {
           if (alreadyUser != null) {
+            alreadyUser.userName ='';
             openUserDetailScreen(alreadyUser);
           }
         }

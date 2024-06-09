@@ -25,6 +25,8 @@ class _UpdateUserDetailsScreenState extends State<UpdateUserDetailsScreen> {
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
+  final formStateKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     initFields();
@@ -46,125 +48,137 @@ class _UpdateUserDetailsScreenState extends State<UpdateUserDetailsScreen> {
           appBar: const CustomAppBar(
             title: 'Update user details',
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'User Name',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  TextField(
-                    controller: _userNameController,
-                    keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your name',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+          body: Form(
+            key: formStateKey,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'User Name',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
                     ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  const Text(
-                    'Email',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  TextField(
-                    readOnly: true,
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your email',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  const Text(
-                    'Mobile Number',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  TextField(
-                    controller: _mobileController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your mobile number',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  const Text(
-                    'Address',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  TextField(
-                    controller: _addressController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your address',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
-                  const SizedBox(height: 32.0),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_mobileController.text.isEmpty) {
-                          AppUtil.showToast("Mobile field can't be empty");
-                          return;
-                        }
-                        updateUserDetail(provider).then((bool updateSuccess) {
-                          if (updateSuccess) {
-                            Get.back(result: updateSuccess);
-                          }
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
+                    const SizedBox(height: 8.0),
+                    TextFormField(
+                      controller: _userNameController,
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your name',
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        filled: true,
+                        fillColor: Colors.grey[200],
                       ),
-                      child: const Text(
-                        'Update',
-                        style: TextStyle(fontSize: 18.0),
+                      validator: (value){
+                        if(value==null|| value.isEmpty){
+                          return 'Please input your name';
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    const Text(
+                      'Email',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8.0),
+                    TextField(
+                      readOnly: true,
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    const Text(
+                      'Mobile Number',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    TextFormField(
+                      controller: _mobileController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your mobile number',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                      ),
+                      validator: (value){
+                        if(value==null|| value.isEmpty){
+                          return 'Please input your mobile number';
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    const Text(
+                      'Address',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    TextField(
+                      controller: _addressController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your address',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                      ),
+                    ),
+                    const SizedBox(height: 32.0),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                           if(formStateKey.currentState?.validate()??false) {
+                             updateUserDetail(provider).then((
+                                 bool updateSuccess) {
+                               if (updateSuccess) {
+                                 Get.back(result: updateSuccess);
+                               }
+                             });
+                           }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        ),
+                        child: const Text(
+                          'Update',
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -27,14 +27,20 @@ class NetworkImageWidget extends StatelessWidget {
               height: height,
               child: const CircularProgressIndicator()),
         ),
-        errorWidget: (context, url, error) => const ImagePlaceHolder(),
+        errorWidget: (context, url, error) => ImagePlaceHolder(
+          imgWidth: imgWidth,
+          imgHeight: imgHeight,
+        ),
         // Assuming you have imageUrl in your Product model
         fit: BoxFit.cover,
         height: imgHeight,
         width: imgWidth,
       );
     } else {
-      return const ImagePlaceHolder();
+      return ImagePlaceHolder(
+        imgWidth: imgWidth,
+        imgHeight: imgHeight,
+      );
     }
   }
 }

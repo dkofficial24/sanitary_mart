@@ -66,7 +66,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                   SizedBox(
                     height: Get.width - 32,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(16),
                       child: NetworkImageWidget(widget.product.image),
                     ),
                   ),

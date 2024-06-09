@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -40,7 +41,11 @@ Future main() async {
     return true;
   };
 
-  runApp(const VendorApp());
+  runApp(DevicePreview(
+      enabled: false,
+      builder: (BuildContext context) {
+        return const VendorApp();
+      },));
 }
 
 Future<void> initFirebase() async {
@@ -60,6 +65,7 @@ class VendorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     StorageHelper storageHelper = StorageHelper();
     Get.put(UserFirebaseService());
+    Get.put(storageHelper);
     Get.put(CartFirebaseService());
     Get.put(OrderService());
     Get.put(PaymentFirebaseService());
