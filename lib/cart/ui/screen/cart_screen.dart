@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
@@ -19,12 +18,14 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final TextEditingController noteController = TextEditingController();
+  bool isNoteAdded = false;
+
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
       fetchCartItems();
     });
-    FirebaseAnalytics.instance.logEvent(name: 'cart_screen');
     super.initState();
   }
 
@@ -37,12 +38,6 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // double totalDiscount = cartProvider.cartItems.fold(
-    //     0,
-    //     (previousValue, cartItem) =>
-    //         previousValue +
-    //         ((cartItem.discountAmount ?? 0) * cartItem.quantity));
-
     return Consumer<CartProvider>(builder: (context, cartProvider, child) {
       double subtotal = cartProvider.cartItems.fold(
           0,
@@ -110,7 +105,10 @@ class _CartScreenState extends State<CartScreen> {
                       ? () {
                     Get.to(CheckoutScreen(
                       cartItems: cartProvider.cartItems,
-                    ));
+                            note: noteController.text.isNotEmpty
+                                ? noteController.text
+                                : null,
+                          ));
                   }
                       : null,
                   style: ElevatedButton.styleFrom(
@@ -131,8 +129,16 @@ class _CartScreenState extends State<CartScreen> {
       }
 
       return Scaffold(
-        appBar: const CustomAppBar(
+        appBar: CustomAppBar(
           title: 'Cart',
+          actions: [
+            IconButton(
+              icon: Icon(isNoteAdded ? Icons.note_alt_outlined : Icons.note_add_outlined),
+              onPressed: () {
+                openNoteBottomSheet(context);
+              },
+            ),
+          ],
         ),
         body: widget,
       );
@@ -147,9 +153,47 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
+
+  void openNoteBottomSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        height: Get.height * 0.5,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: noteController,
+                  maxLines: 8,
+                  decoration: const InputDecoration(
+                    labelText: 'Add a note',
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isNoteAdded = noteController.text.isNotEmpty;
+                    });
+                    Get.back();
+                  },
+                  child: const Text('Add Note'),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
-
-
 
 String? getUserId(BuildContext context) {
   return Provider.of<AuthenticationProvider>(context, listen: false)
