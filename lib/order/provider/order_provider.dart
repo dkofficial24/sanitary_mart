@@ -24,7 +24,9 @@ class OrderProvider extends ChangeNotifier {
   List<OrderModel>? filteredOrderModelList;
 
   Future placeOrder(
-      {required List<CartItem> cartItems, required UserModel userModel}) async {
+      {required List<CartItem> cartItems,
+      required UserModel userModel,
+      String? note}) async {
     try {
       _state = ProviderState.loading;
       notifyListeners();
@@ -32,7 +34,7 @@ class OrderProvider extends ChangeNotifier {
       var totalPayable = 0.0;
       for (int i = 0; i < cartItems.length; i++) {
         orderItems.add(OrderItem.fromCartItem(cartItems[i]));
-        totalPayable += (cartItems[i].price*cartItems[i].quantity);
+        totalPayable += (cartItems[i].price * cartItems[i].quantity);
       }
       String orderId = AppUtil.generateOrderId();
 
@@ -42,13 +44,15 @@ class OrderProvider extends ChangeNotifier {
           orderStatus: OrderStatus.pending,
           createdAt: DateTime.now().millisecondsSinceEpoch,
           updatedAt: DateTime.now().millisecondsSinceEpoch,
-          userVerified: userModel.verified??false,
+          userVerified: userModel.verified ?? false,
+          note: note,
           customer: Customer(
             uId: userModel.uId,
             userName: userModel.userName,
             email: userModel.email,
-            phone: userModel.phone ??'',
+            phone: userModel.phone ?? '',
             userDeviceToken: userModel.userDeviceToken,
+            address: userModel.address,
           ));
 
       await Get.find<OrderService>().placeOrder(order);
