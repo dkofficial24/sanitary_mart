@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/provider/auth_provider.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/provider/cart_provider.dart';
+import 'package:sanitary_mart/cart/ui/screen/cart_screen.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/debouncer.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/app_image_network_widget.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
-import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -44,9 +44,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
           IconButton(
               onPressed: () {
                 FirebaseAnalytics.instance.logEvent(name: 'pdp_cart');
-                Get.offAll(()=>const DashboardScreen(
-                  selectedTab: 1,
-                ));
+                Get.to(() => const CartScreen());
               },
               icon: const Icon(
                 Icons.shopping_cart_outlined,
