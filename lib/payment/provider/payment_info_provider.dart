@@ -6,20 +6,21 @@ import 'package:sanitary_mart/payment/service/payment_firebase_service.dart';
 import 'package:sanitary_mart/payment/service/payment_service.dart';
 
 class PaymentInfoProvider extends ChangeNotifier {
-  PaymentInfo? paymentInfo;
+  List<PaymentInfo> paymentInfoList = [];
   ProviderState providerState = ProviderState.idle;
   bool isUploading = false;
 
   Future fetchPaymentInfo({bool refresh = false}) async {
-    if (!refresh && paymentInfo != null) return;
+    //if (!refresh && paymentInfo != null) return;
     try {
       print('fetchPaymentInfo');
       providerState = ProviderState.loading;
       notifyListeners();
       PaymentFirebaseService adminService = Get.find<PaymentFirebaseService>();
-      paymentInfo = await adminService.fetchPaymentInfo();
+      paymentInfoList = await adminService.fetchPaymentInfo();
       providerState = ProviderState.idle;
     } catch (e) {
+      paymentInfoList = [];
       providerState = ProviderState.error;
     } finally {
       notifyListeners();
