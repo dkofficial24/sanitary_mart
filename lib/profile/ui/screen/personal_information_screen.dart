@@ -45,7 +45,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       body: Consumer<UserProvider>(
         builder: (BuildContext context, UserProvider provider, Widget? child) {
           if (provider.providerState == ProviderState.loading) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else if (provider.providerState == ProviderState.error) {
             return ErrorRetryWidget(onRetry: () {
               _fetchUserData();
