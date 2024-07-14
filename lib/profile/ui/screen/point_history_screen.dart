@@ -19,12 +19,12 @@ class IncentivePointListScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Consumer<UserProvider>(
           builder: (context, userProvider, child) {
-            if (userProvider.incentivePointsHistory.isEmpty) {
-              return const Center(child: Text('No Incentive Points History'));
-            } else if (userProvider.providerState == ProviderState.loading) {
+            if (userProvider.providerState == ProviderState.loading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
+            } else if (userProvider.incentivePointsHistory.isEmpty) {
+              return const Center(child: Text('No Incentive Points History'));
             }
 
             return ListView.separated(
@@ -36,11 +36,11 @@ class IncentivePointListScreen extends StatelessWidget {
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16.0),
                     title: Text(
-                      'Points: ${point.totalPoints}',
+                      'Points: ${point.totalPoints.toStringAsFixed(2)}',
                       style: TextStyle(color: Colors.black87),
                     ),
                     subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, // Align content left
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
@@ -51,25 +51,19 @@ class IncentivePointListScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 5.0), // Add spacing between date and status
+                        const SizedBox(height: 5.0),
                         Row(
                           children: [
                             Text(
                               'Status: ${point.redeemStatus}',
                               style: TextStyle(
-                                  color: point.redeemStatus == 'Redeemed'
-                                      ? Colors.green
-                                      : Colors.orange),
+                                  color: _getStatusColor(point.redeemStatus)),
                             ),
                             const SizedBox(width: 5.0),
                             Icon(
-                              point.redeemStatus == 'Redeemed'
-                                  ? Icons.check_circle_outline
-                                  : Icons.access_time_outlined,
+                              getStatusIcon(point.redeemStatus),
                               size: 16.0,
-                              color: point.redeemStatus == 'Redeemed'
-                                  ? Colors.green
-                                  : Colors.orange,
+                              color: _getStatusColor(point.redeemStatus),
                             ),
                           ],
                         ),
@@ -85,7 +79,34 @@ class IncentivePointListScreen extends StatelessWidget {
     );
   }
 
+
   String _formatDate(int millisecondsSinceEpoch) {
     return AppUtil.convertTimestampInDate(millisecondsSinceEpoch);
+  }
+
+  IconData getStatusIcon(RedeemStatus status) {
+    switch (status) {
+      case RedeemStatus.accepted:
+        return Icons.check_circle_outline;
+      case RedeemStatus.rejected:
+        return Icons.close_outlined;
+      case RedeemStatus.processing:
+        return Icons.access_time_outlined;
+      default:
+        return Icons.circle_outlined;
+    }
+  }
+
+  Color _getStatusColor(RedeemStatus status) {
+    switch (status) {
+      case RedeemStatus.accepted:
+        return Colors.green;
+      case RedeemStatus.processing:
+        return Colors.orange;
+      case RedeemStatus.rejected:
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }

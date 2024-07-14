@@ -137,6 +137,7 @@ class UserFirebaseService {
         .collection('incentive_points')
         .doc(uId)
         .collection('data')
+        .orderBy('updated', descending: true)
         .get();
     return querySnapshot.docs
         .map((doc) => IncentivePointInfo.fromDocument(doc))

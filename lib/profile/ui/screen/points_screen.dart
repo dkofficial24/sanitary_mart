@@ -81,7 +81,7 @@ class _IncentivePointsScreenState extends State<IncentivePointsScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    provider.totalPoints.toString(),
+                    provider.totalPoints.toStringAsFixed(2),
                     style: const TextStyle(
                       fontSize: 48.0,
                       fontWeight: FontWeight.bold,
