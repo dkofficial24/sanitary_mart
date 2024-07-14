@@ -58,7 +58,7 @@ class UserProfileTab extends StatelessWidget {
             subtitle: const Text('Earned points'),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
-              Get.to(const PointsScreen());
+              Get.to(const IncentivePointsScreen(points: 110,));
             },
           ),
           ListTile(

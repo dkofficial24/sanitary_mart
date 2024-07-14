@@ -14,6 +14,7 @@ import 'package:sanitary_mart/order/model/order_status.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
 import 'package:sanitary_mart/order/ui/order_screen.dart';
 import 'package:sanitary_mart/payment/ui/payment_info_screen.dart';
+import 'package:sanitary_mart/profile/service/user_firebase_service.dart';
 
 class OrderProvider extends ChangeNotifier {
   ProviderState _state = ProviderState.idle;
@@ -32,9 +33,11 @@ class OrderProvider extends ChangeNotifier {
       notifyListeners();
       List<OrderItem> orderItems = [];
       var totalPayable = 0.0;
+      var totalIncentivePoints = 0.0;
       for (int i = 0; i < cartItems.length; i++) {
         orderItems.add(OrderItem.fromCartItem(cartItems[i]));
         totalPayable += (cartItems[i].price * cartItems[i].quantity);
+        totalIncentivePoints += ((cartItems[i].discountAmount ?? 0) / 10);
       }
       String orderId = AppUtil.generateOrderId();
 
@@ -56,6 +59,12 @@ class OrderProvider extends ChangeNotifier {
           ));
 
       await Get.find<OrderService>().placeOrder(order);
+      if (userModel.verified ?? false) {
+        Get.find<UserFirebaseService>().updateIncentivePoints(
+          order.customer!.uId,
+          totalIncentivePoints,
+        );
+      }
       await Get.find<CartFirebaseService>().clearFullCart(order.customer!.uId);
       AppUtil.showPositiveToast('Order placed successfully !');
       _state = ProviderState.idle;
@@ -69,7 +78,7 @@ class OrderProvider extends ChangeNotifier {
       Get.to(const OrderScreen());
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong!',isError: true);
+      AppUtil.showToast('Something went wrong!', isError: true);
       FirebaseAnalytics.instance.logEvent(name: 'error_order_placed');
       Log.e(e);
     } finally {

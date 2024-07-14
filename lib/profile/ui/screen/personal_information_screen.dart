@@ -32,61 +32,69 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          _updateUserDetails(context);
-        },
-        child: const Icon(Icons.edit),
-      ),
-      appBar: const CustomAppBar(
-        title: 'User details',
-      ),
-      body: Consumer<UserProvider>(
+    return Consumer<UserProvider>(
         builder: (BuildContext context, UserProvider provider, Widget? child) {
-          if (provider.providerState == ProviderState.loading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (provider.providerState == ProviderState.error) {
-            return ErrorRetryWidget(onRetry: () {
-              _fetchUserData();
-            });
-          } else if (provider.userModel == null) {
-            return const Center(
-              child: Text('No user details available'),
-            );
-          }
+      return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _updateUserDetails(context);
+          },
+          child: const Icon(Icons.edit),
+        ),
+        appBar: CustomAppBar(title: 'User details', actions: [
+          if (provider.userModel?.isActive ?? false)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Icon(Icons.check_circle_rounded, color: Colors.white),
+            )
+        ]),
+        body: Consumer<UserProvider>(
+          builder:
+              (BuildContext context, UserProvider provider, Widget? child) {
+            if (provider.providerState == ProviderState.loading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (provider.providerState == ProviderState.error) {
+              return ErrorRetryWidget(onRetry: () {
+                _fetchUserData();
+              });
+            } else if (provider.userModel == null) {
+              return const Center(
+                child: Text('No user details available'),
+              );
+            }
 
-          return ListView(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Full Name'),
-                subtitle: Text(provider.userModel!.userName),
-              ),
-              ListTile(
-                leading: const Icon(Icons.phone),
-                title: const Text('Mobile Number'),
-                subtitle: Text(provider.userModel!.phone ?? '-'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.email),
-                title: const Text('Email'),
-                subtitle: Text(provider.userModel!.email),
-              ),
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('Address'),
-                subtitle: Text(provider.userModel!.address ?? '-'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+            return ListView(
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Full Name'),
+                  subtitle: Text(provider.userModel!.userName),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.phone),
+                  title: const Text('Mobile Number'),
+                  subtitle: Text(provider.userModel!.phone ?? '-'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.email),
+                  title: const Text('Email'),
+                  subtitle: Text(provider.userModel!.email),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('Address'),
+                  subtitle: Text(provider.userModel!.address ?? '-'),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+    });
   }
 
   Future<void> _updateUserDetails(BuildContext context) async {
-    UserProvider provider = Provider.of<UserProvider>(context,listen: false);
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
 
     if (provider.userModel != null) {
       await Get.to(() => UpdateUserDetailsScreen(
