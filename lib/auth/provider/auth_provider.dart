@@ -90,7 +90,7 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   void openDashboardScreen() {
-    Get.offAll(()=>const DashboardScreen());
+    Get.offAll(() => const DashboardScreen());
   }
 
   ///@Deprecated
@@ -126,7 +126,7 @@ class AuthenticationProvider extends ChangeNotifier {
           openDashboardScreen();
         } else {
           if (alreadyUser != null) {
-            alreadyUser.userName ='';
+            alreadyUser.userName = '';
             openUserDetailScreen(alreadyUser);
           }
         }
@@ -134,7 +134,7 @@ class AuthenticationProvider extends ChangeNotifier {
     } catch (e) {
       isError = true;
       notifyListeners();
-      AppUtil.showToast(e.toString(),isError: true);
+      AppUtil.showToast(e.toString(), isError: true);
     } finally {
       hideLoader();
     }
@@ -155,15 +155,17 @@ class AuthenticationProvider extends ChangeNotifier {
     isError = false;
     UserFirebaseService firebaseAuthService = Get.find();
     String? token = await firebaseAuthService.getFirebaseToken();
+    UserModel? savedUserModel = await firebaseAuthService.getLoggedUser();
+
     UserModel userModel = UserModel(
       uId: user.uid,
-      userName: user.displayName.toString(),
+      userName: savedUserModel?.userName ?? user.displayName.toString(),
       email: user.email.toString(),
-      phone: user.phoneNumber,
+      phone: savedUserModel?.phone ?? user.phoneNumber,
       userDeviceToken: token ?? '',
       isAdmin: false,
-      isActive: true,
-      createdOn: DateTime.now(),
+      isActive: savedUserModel?.isActive ?? true,
+      createdOn: savedUserModel?.createdOn ?? DateTime.now(),
     );
     await firebaseAuthService.saveUserDetails(userModel);
   }
@@ -178,7 +180,7 @@ class AuthenticationProvider extends ChangeNotifier {
     } catch (e) {
       isError = true;
       notifyListeners();
-      AppUtil.showToast(e.toString(),isError: true);
+      AppUtil.showToast(e.toString(), isError: true);
       FirebaseAnalytics.instance
           .logEvent(name: 'logout_error', parameters: {'error': e.toString()});
     } finally {
