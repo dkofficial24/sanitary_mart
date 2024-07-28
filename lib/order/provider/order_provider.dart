@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
-import 'package:sanitary_mart/cart/service/cart_service.dart';
+import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
@@ -14,6 +14,7 @@ import 'package:sanitary_mart/order/model/order_status.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
 import 'package:sanitary_mart/order/ui/order_screen.dart';
 import 'package:sanitary_mart/payment/ui/payment_info_screen.dart';
+import 'package:sanitary_mart/profile/service/user_firebase_service.dart';
 
 class OrderProvider extends ChangeNotifier {
   ProviderState _state = ProviderState.idle;
@@ -24,15 +25,19 @@ class OrderProvider extends ChangeNotifier {
   List<OrderModel>? filteredOrderModelList;
 
   Future placeOrder(
-      {required List<CartItem> cartItems, required UserModel userModel}) async {
+      {required List<CartItem> cartItems,
+      required UserModel userModel,
+      String? note}) async {
     try {
       _state = ProviderState.loading;
       notifyListeners();
       List<OrderItem> orderItems = [];
       var totalPayable = 0.0;
+      var totalIncentivePoints = 0.0;
       for (int i = 0; i < cartItems.length; i++) {
         orderItems.add(OrderItem.fromCartItem(cartItems[i]));
-        totalPayable += (cartItems[i].price*cartItems[i].quantity);
+        totalPayable += (cartItems[i].price * cartItems[i].quantity);
+        totalIncentivePoints += ((cartItems[i].discountAmount ?? 0) / 10);
       }
       String orderId = AppUtil.generateOrderId();
 
@@ -42,16 +47,24 @@ class OrderProvider extends ChangeNotifier {
           orderStatus: OrderStatus.pending,
           createdAt: DateTime.now().millisecondsSinceEpoch,
           updatedAt: DateTime.now().millisecondsSinceEpoch,
-          userVerified: userModel.verified??false,
+          userVerified: userModel.verified ?? false,
+          note: note,
           customer: Customer(
             uId: userModel.uId,
             userName: userModel.userName,
             email: userModel.email,
-            phone: userModel.phone ??'',
+            phone: userModel.phone ?? '',
             userDeviceToken: userModel.userDeviceToken,
+            address: userModel.address,
           ));
 
       await Get.find<OrderService>().placeOrder(order);
+      if (userModel.verified ?? false) {
+        Get.find<UserFirebaseService>().updateIncentivePoints(
+          order.customer!.uId,
+          totalIncentivePoints,
+        );
+      }
       await Get.find<CartFirebaseService>().clearFullCart(order.customer!.uId);
       AppUtil.showPositiveToast('Order placed successfully !');
       _state = ProviderState.idle;
@@ -65,7 +78,7 @@ class OrderProvider extends ChangeNotifier {
       Get.to(const OrderScreen());
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong!',isError: true);
+      AppUtil.showToast('Something went wrong!', isError: true);
       FirebaseAnalytics.instance.logEvent(name: 'error_order_placed');
       Log.e(e);
     } finally {

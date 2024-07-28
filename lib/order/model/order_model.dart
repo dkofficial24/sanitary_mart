@@ -9,6 +9,7 @@ class OrderModel {
   OrderStatus orderStatus;
   Customer? customer;
   bool userVerified;
+  String? note;
 
   OrderModel({
     required this.orderId,
@@ -17,10 +18,10 @@ class OrderModel {
     this.orderStatus = OrderStatus.pending,
     this.createdAt,
     this.updatedAt,
-    this.userVerified=false,
+    this.userVerified = false,
+    this.note,
   });
 
-  // Convert OrderModel instance to Map for serialization
   Map<String, dynamic> toJson() {
     return {
       'orderId': orderId,
@@ -29,10 +30,11 @@ class OrderModel {
       'updatedAt': updatedAt,
       'orderStatus': orderStatus.name,
       'userVerified': userVerified,
+      'note': note,
+      'customer': customer != null ? customer!.toJson() : null,
     };
   }
 
-  // Construct an OrderModel instance from a Map
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     var list = json['orderItems'] as List;
     List<OrderItem> orderItemsList =
@@ -44,6 +46,7 @@ class OrderModel {
       updatedAt: json['updatedAt'],
       userVerified: json['userVerified'] ?? false,
       orderStatus: parseOrderStatus(json['orderStatus']),
+      note: json['note'],
       customer:
           json['customer'] != null ? Customer.fromJson(json['customer']) : null,
     );
@@ -56,6 +59,7 @@ class Customer {
   String email;
   String phone;
   String userDeviceToken;
+  String? address;
 
   Customer({
     required this.uId,
@@ -63,6 +67,7 @@ class Customer {
     required this.email,
     required this.phone,
     required this.userDeviceToken,
+    this.address,
   });
 
   Map<String, dynamic> toJson() {
@@ -72,6 +77,7 @@ class Customer {
       'email': email,
       'phone': phone,
       'userDeviceToken': userDeviceToken,
+      'address': address,
     };
   }
 
@@ -82,6 +88,7 @@ class Customer {
       email: json['email'],
       phone: json['phone'],
       userDeviceToken: json['userDeviceToken'],
+      address: json['address'],
     );
   }
 }

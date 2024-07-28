@@ -15,14 +15,22 @@ import 'package:sanitary_mart/profile/provider/user_provider.dart';
 import 'package:sanitary_mart/profile/ui/screen/update_user_detail_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
-  CheckoutScreen({super.key, required this.cartItems});
+  CheckoutScreen({
+    super.key,
+    required this.cartItems,
+    this.note,
+  });
 
   final List<CartItem> cartItems;
   final formKey = GlobalKey<FormState>();
+  final String? note;
 
-  final TextEditingController nameController = TextEditingController(text: 'Test Name');
-  final TextEditingController phoneController = TextEditingController(text: '567890');
-  final TextEditingController addressController = TextEditingController(text: 'Test Address');
+  final TextEditingController nameController =
+      TextEditingController(text: 'Test Name');
+  final TextEditingController phoneController =
+      TextEditingController(text: '567890');
+  final TextEditingController addressController =
+      TextEditingController(text: 'Test Address');
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +271,8 @@ class CheckoutScreen extends StatelessWidget {
           updateUserModel: UpdateUserModel.fromUserModel(userModel),
         ));
       } else {
-        checkoutProvider.placeOrder(cartItems: cartItems, userModel: userModel);
+        checkoutProvider.placeOrder(
+            cartItems: cartItems, userModel: userModel, note: note);
       }
     } else {
       FirebaseAnalytics.instance.logEvent(name: 'user_not_found');

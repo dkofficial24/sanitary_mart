@@ -11,8 +11,8 @@ import 'package:sanitary_mart/order/ui/order_screen.dart';
 import 'package:sanitary_mart/payment/ui/payment_info_screen.dart';
 import 'package:sanitary_mart/profile/provider/user_provider.dart';
 import 'package:sanitary_mart/profile/ui/screen/about_us.dart';
-import 'package:sanitary_mart/profile/ui/screen/address_list_screen.dart';
 import 'package:sanitary_mart/profile/ui/screen/personal_information_screen.dart';
+import 'package:sanitary_mart/profile/ui/screen/points_screen.dart';
 
 class UserProfileTab extends StatelessWidget {
   const UserProfileTab({super.key});
@@ -52,6 +52,15 @@ class UserProfileTab extends StatelessWidget {
           //     Get.to(AddressListScreen());
           //   },
           // ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Incentive Points'),
+            subtitle: const Text('Earned points'),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Get.to(const IncentivePointsScreen(points: 110,));
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('About Us'),

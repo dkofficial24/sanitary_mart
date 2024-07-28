@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:sanitary_mart/core/constant/constant.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
+import 'package:sanitary_mart/core/widget/list_item_widget.dart';
 import 'package:sanitary_mart/core/widget/search_text_field.widget.dart';
 import 'package:sanitary_mart/core/widget/shimmer_grid_list_widget.dart';
+import 'package:sanitary_mart/core/widget/view_type_toggle.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
 import 'package:sanitary_mart/product/provider/product_provider.dart';
@@ -29,6 +31,7 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   final TextEditingController _searchController = TextEditingController();
+  bool _isGridView = AppConst.isGridDefaultView;
 
   @override
   void initState() {
@@ -58,11 +61,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
+  void _toggleView() {
+    setState(() {
+      _isGridView = !_isGridView;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         title: widget.brandName,
+        actions: [
+          ViewTypeToggle(
+            onToggle: (isGridView) {
+              _isGridView = isGridView;
+              setState(() {});
+            },
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: <Widget>[
@@ -78,10 +95,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
           Consumer<ProductProvider>(
             builder: (context, provider, child) {
               if (provider.state == ProviderState.loading) {
-                return const SliverFillRemaining(
+                return SliverFillRemaining(
                   child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: ShimmerGridListWidget(),
+                    padding: const EdgeInsets.all(16),
+                    child: ShimmerGridListWidget(isGridView: _isGridView),
                   ),
                 );
               } else if (provider.state == ProviderState.error) {
@@ -102,77 +119,110 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 );
               }
 
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16.0,
-                    mainAxisSpacing: 16.0,
-                    childAspectRatio: 0.8,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                      final Product product = provider.filteredProducts[index];
-                      return InkWell(
-                        onTap: () {
-                          Get.off(ProductDetailPage(
-                            product: product,
-                            brandName: widget.brandName,
-                          ));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.network(
-                                product.image ?? '',
-                                height: 80,
-                                width: 80,
-                                fit: BoxFit.contain,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                product.name,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '₹${product.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    childCount: provider.filteredProducts.length,
-                  ),
-                ),
-              );
+              return _isGridView
+                  ? _buildGridView(provider)
+                  : _buildListView(provider);
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGridView(ProductProvider provider) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16.0,
+          mainAxisSpacing: 16.0,
+          childAspectRatio: 0.8,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            final Product product = provider.filteredProducts[index];
+            return InkWell(
+              onTap: () {
+                Get.to(ProductDetailPage(
+                  product: product,
+                  brandName: widget.brandName,
+                ));
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: NetworkImageWidget(
+                          product.image ?? '',
+                          imgHeight: 50,
+                        ),
+                      ),
+                      height: 100,
+                      width: 100,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '₹${product.price.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          childCount: provider.filteredProducts.length,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListView(ProductProvider provider) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          final Product product = provider.filteredProducts[index];
+          return ListItemWidget(
+            name: product.name,
+            image: product.image ?? '',
+            price: product.price.toString(),
+            onItemTap: () {
+              Get.to(ProductDetailPage(
+                product: product,
+                brandName: widget.brandName,
+              ));
+            },
+          );
+        },
+        childCount: provider.filteredProducts.length,
       ),
     );
   }

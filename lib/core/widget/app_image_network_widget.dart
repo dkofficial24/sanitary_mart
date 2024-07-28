@@ -4,12 +4,17 @@ import 'package:sanitary_mart/core/widget/image_placeholder_widget.dart';
 
 class NetworkImageWidget extends StatelessWidget {
   const NetworkImageWidget(this.url,
-      {this.width = 30, this.height = 30, this.imgHeight = 150, super.key});
+      {this.width = 30,
+      this.height = 30,
+      this.imgHeight = 150,
+      this.imgWidth = double.infinity,
+      super.key});
 
   final String url;
   final double height;
   final double width;
   final double imgHeight;
+  final double imgWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +27,20 @@ class NetworkImageWidget extends StatelessWidget {
               height: height,
               child: const CircularProgressIndicator()),
         ),
-        errorWidget: (context, url, error) => const ImagePlaceHolder(),
+        errorWidget: (context, url, error) => ImagePlaceHolder(
+          imgWidth: imgWidth,
+          imgHeight: imgHeight,
+        ),
         // Assuming you have imageUrl in your Product model
         fit: BoxFit.cover,
         height: imgHeight,
-        width: double.infinity,
+        width: imgWidth,
       );
     } else {
-      return const ImagePlaceHolder();
+      return ImagePlaceHolder(
+        imgWidth: imgWidth,
+        imgHeight: imgHeight,
+      );
     }
   }
 }

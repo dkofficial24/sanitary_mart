@@ -16,30 +16,29 @@ class OrderService {
         .set(order.toJson());
   }
 
-  Future<List<OrderModel>> fetchUserOrders(String uId) async {
-    final userSnapshot =
-        await FirebaseFirestore.instance.collection('orders').doc(uId).get();
+Future<List<OrderModel>> fetchUserOrders(String uId) async {
+  final userSnapshot =
+  await FirebaseFirestore.instance.collection('orders').doc(uId).get();
 
-    if(!userSnapshot.exists){
-      return [];
-    }
-    Customer customer =
-        Customer.fromJson(userSnapshot.data() as Map<String, dynamic>);
-
-    final ordersSnapshot = (await FirebaseFirestore.instance
-        .collection('orders')
-        .doc(uId)
-        .collection('confirmOrders')
-        .orderBy('createdAt', descending: true)
-        .get());
-
-    final orders = ordersSnapshot.docs.map((doc) {
-      print('');
-      OrderModel orderModel = OrderModel.fromJson(doc.data());
-      orderModel.customer = customer;
-      return orderModel;
-    }).toList();
-
-    return orders;
+  if (!userSnapshot.exists) {
+    return [];
   }
-}
+  Customer customer =
+  Customer.fromJson(userSnapshot.data() as Map<String, dynamic>);
+
+  final ordersSnapshot = (await FirebaseFirestore.instance
+      .collection('orders')
+      .doc(uId)
+      .collection('confirmOrders')
+      .orderBy('createdAt', descending: true)
+      .get());
+
+  final orders = ordersSnapshot.docs.map((doc) {
+    print('');
+    OrderModel orderModel = OrderModel.fromJson(doc.data());
+    orderModel.customer = customer;
+    return orderModel;
+  }).toList();
+
+  return orders;
+}}

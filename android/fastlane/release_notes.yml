@@ -1,1 +1,5 @@
-release_note: "Setting CICD for hustle-free apk sharing"
+release_note: "- Add note at cart screen
+- Multiple payment info details
+- Click on cart icon at product detail page navigate to Cart screen not at cart tab
+- minor fixes
+"

@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -11,7 +12,7 @@ import 'package:sanitary_mart/auth/service/auth_service.dart';
 import 'package:sanitary_mart/brand/provider/brand_provider.dart';
 import 'package:sanitary_mart/brand/service/brand_firebase_service.dart';
 import 'package:sanitary_mart/cart/provider/cart_provider.dart';
-import 'package:sanitary_mart/cart/service/cart_service.dart';
+import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/category/provider/category_provider.dart';
 import 'package:sanitary_mart/category/service/category_firebase_service.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
@@ -40,7 +41,11 @@ Future main() async {
     return true;
   };
 
-  runApp(const VendorApp());
+  runApp(DevicePreview(
+      enabled: false,
+      builder: (BuildContext context) {
+        return const VendorApp();
+      },));
 }
 
 Future<void> initFirebase() async {
@@ -60,6 +65,7 @@ class VendorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     StorageHelper storageHelper = StorageHelper();
     Get.put(UserFirebaseService());
+    Get.put(storageHelper);
     Get.put(CartFirebaseService());
     Get.put(OrderService());
     Get.put(PaymentFirebaseService());
