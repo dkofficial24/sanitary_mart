@@ -8,6 +8,8 @@ import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
+import 'package:sanitary_mart/notification/model/notification_model.dart';
+import 'package:sanitary_mart/notification/service/notification_service.dart';
 import 'package:sanitary_mart/order/model/order_item.dart';
 import 'package:sanitary_mart/order/model/order_model.dart';
 import 'package:sanitary_mart/order/model/order_status.dart';
@@ -59,6 +61,17 @@ class OrderProvider extends ChangeNotifier {
           ));
 
       await Get.find<OrderService>().placeOrder(order);
+      await Get.find<NotificationService>()
+          .createNotification(NotificationModel(
+        orderId: orderId,
+        userId: userModel.uId,
+        userName: userModel.userName,
+        noOfItem: orderItems.length,
+        timestamp: DateTime.now().millisecondsSinceEpoch,
+        status: 'unread',
+        type: 'order_arrival',
+      ));
+
       if (userModel.verified ?? false) {
         Get.find<UserFirebaseService>().updateIncentivePoints(
           order.customer!.uId,

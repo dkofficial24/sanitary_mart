@@ -57,31 +57,41 @@ class CartItemWidget extends StatelessWidget {
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),
-                            maxLines: 2, // Allow for wrapping long product names
-                            overflow: TextOverflow.ellipsis, // Ellipsis for overflowing text
+                            maxLines: 2,
+                            // Allow for wrapping long product names
+                            overflow: TextOverflow
+                                .ellipsis, // Ellipsis for overflowing text
                           ),
                           Text(
                             cartItem.brand,
                             style: const TextStyle(
                               fontSize: 14.0,
                             ),
-                            maxLines: 2, // Allow for wrapping long product names
-                            overflow: TextOverflow.ellipsis, // Ellipsis for overflowing text
+                            maxLines: 2,
+                            // Allow for wrapping long product names
+                            overflow: TextOverflow
+                                .ellipsis, // Ellipsis for overflowing text
                           ),
                         ],
                       ),
                       IconButton(
                         onPressed: onRemove,
-                        iconSize: 28.0, // Smaller icon size
-                        icon: const Icon(Icons.delete_outline), // Outline icon for better visibility
-                        padding: EdgeInsets.zero, // Remove default padding
-                        constraints: const BoxConstraints(), // Remove default constraints
+                        iconSize: 28.0,
+                        // Smaller icon size
+                        icon: const Icon(Icons.delete_outline),
+                        // Outline icon for better visibility
+                        padding: EdgeInsets.zero,
+                        // Remove default padding
+                        constraints:
+                            const BoxConstraints(), // Remove default constraints
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4), // Reduced spacing between price and quantity
+                  const SizedBox(height: 4),
+                  // Reduced spacing between price and quantity
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align price and quantity
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Align price and quantity
                     children: [
                       Text(
                         '₹${cartItem.price.toStringAsFixed(2)}',
@@ -89,13 +99,15 @@ class CartItemWidget extends StatelessWidget {
                       ),
                       // Improved quantity control with Text field
                       Row(
-                        mainAxisSize: MainAxisSize.min, // Fixed width for quantity section
+                        mainAxisSize: MainAxisSize.min,
+                        // Fixed width for quantity section
                         children: [
                           IconButton(
                             onPressed: () {
                               if (cartItem.quantity > 1) {
                                 String? uId = getUserId(context);
-                                Provider.of<CartProvider>(context, listen: false)
+                                Provider.of<CartProvider>(context,
+                                        listen: false)
                                     .updateCartItemQuantity(
                                   uId: uId!,
                                   productId: cartItem.productId,
@@ -132,7 +144,6 @@ class CartItemWidget extends StatelessWidget {
             ),
 
             // Remove button with smaller icon size and improved placement
-
           ],
         ),
       ),

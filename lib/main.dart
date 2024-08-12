@@ -17,6 +17,7 @@ import 'package:sanitary_mart/category/provider/category_provider.dart';
 import 'package:sanitary_mart/category/service/category_firebase_service.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
 import 'package:sanitary_mart/firebase_options.dart';
+import 'package:sanitary_mart/notification/service/notification_service.dart';
 import 'package:sanitary_mart/order/provider/order_provider.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
 import 'package:sanitary_mart/payment/provider/payment_info_provider.dart';
@@ -70,6 +71,7 @@ class VendorApp extends StatelessWidget {
     Get.put(OrderService());
     Get.put(PaymentFirebaseService());
     Get.put(PaymentService());
+    Get.put(NotificationService());
 
     final authProvider = AuthenticationProvider(
       authService: AuthService(),

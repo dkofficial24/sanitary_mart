@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -7,9 +9,9 @@ import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
+import 'package:sanitary_mart/product/model/product_model.dart';
 
 class CartProvider extends ChangeNotifier {
-
   List<CartItem> _cartItems = [];
   ProviderState _state = ProviderState.idle;
 
@@ -30,12 +32,12 @@ class CartProvider extends ChangeNotifier {
     try {
       _state = ProviderState.loading;
       notifyListeners();
-      _cartItems = await cartService.getCartItems(userId);
+       _cartItems = await cartService.getCartItems(userId);
       _state = ProviderState.idle;
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart');
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong',isError: true);
+      AppUtil.showToast('Something went wrong', isError: true);
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart_error');
     } finally {
       notifyListeners();
@@ -82,11 +84,11 @@ class CartProvider extends ChangeNotifier {
     return totalDiscount;
   }
 
-  Future<void> updateCartItemQuantity({
-    required String uId,
-    required String productId,
-    required int newQuantity,
-  }) async {
+  Future<void> updateCartItemQuantity(
+      {required String uId,
+      required String productId,
+      required int newQuantity,
+      bool isRemove = false}) async {
     if (newQuantity <= 0) return; // Handle invalid quantity
     CartFirebaseService cartService = Get.find();
     await cartService.updateCartItemQuantity(
@@ -99,14 +101,59 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  void clearCart() async {
-    // await _cartService
-    //     .clearCart(uid); // Call clearCart method in service (if available)
-    // _cartItems.clear();
-    // notifyListeners();
+  void addAndUpdateCart(String uid, Product product, int quantity, brandName) {
+    CartItem cartItem = CartItem(
+      productId: product.id ?? "0",
+      productName: product.name,
+      price: product.price,
+      brand: brandName,
+      quantity: quantity,
+      productImg: product.image,
+      discountAmount: product.discountAmount,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    // Check if the item is already in the cart
+    final existingItemIndex =
+        cartItems.indexWhere((item) => item.productId == product.id);
+
+    if (existingItemIndex == -1) {
+      // Item is not in the cart, add it
+      addToCart(uid, cartItem);
+    } else {
+      // Item is in the cart, update the quantity
+      final existingItem = cartItems[existingItemIndex];
+      updateCartItemQuantity(
+        uId: uid,
+        productId: product.id!,
+        newQuantity: existingItem.quantity + 1, // Increase quantity by 1
+      );
+    }
   }
 
-  void reset(){
-    _cartItems = [];
+  void removeAndUpdateCart(String uid, String productId) async {
+    final existingItemIndex =
+        cartItems.indexWhere((item) => item.productId == productId);
+
+    if (existingItemIndex != -1) {
+      final existingItem = cartItems[existingItemIndex];
+      if (existingItem.quantity > 1) {
+        // If quantity is more than 1, decrease by 1
+        updateCartItemQuantity(
+          uId: uid,
+          productId: productId,
+          newQuantity: existingItem.quantity - 1, // Decrease quantity by 1
+        );
+      } else {
+        // If quantity is 1, remove the item from the cart
+        removeFromCart(uid, productId);
+      }
+    }
+  }
+
+  void clearCart() async {
+    void reset() {
+      _cartItems = [];
+    }
   }
 }
