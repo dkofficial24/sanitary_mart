@@ -22,6 +22,9 @@ class Category {
 
   // Create Category object from a Firestore DocumentSnapshot
   static Category fromFirebase(DocumentSnapshot doc) {
+    if(doc.data() ==null){
+      return Category(name: 'Unknown');
+    }
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Category(
       id: doc.id,

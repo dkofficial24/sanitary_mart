@@ -20,6 +20,9 @@ class Brand {
   }
 
   static Brand fromFirebase(DocumentSnapshot doc) {
+    if(doc.data()==null){
+      return Brand(name: 'Unknown');
+    }
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Brand(
       id: doc.id,

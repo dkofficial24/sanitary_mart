@@ -200,7 +200,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
       return;
     }
 
-    double discount = widget.product.discountAmount;
+    double discount = widget.product.getFinalDiscountAmt();
 
     CartItem cartItem = CartItem(
       productId: widget.product.id ?? "0",

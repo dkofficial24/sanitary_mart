@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/get_utils.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -51,21 +51,23 @@ Future<String> getExternalDocumentPath() async {
   return exPath;
 }
 
-
 Future<void> downloadOrderAsPdf(BuildContext context, OrderModel order) async {
   pw.Document pdf = createPdfDocument(order);
   final path = await getExternalDocumentPath();
-  final filePath = join(path, 'order_${order.orderId}.pdf');  // Combine path and filename
+  final filePath =
+      join(path, 'order_${order.orderId}.pdf'); // Combine path and filename
   if (!await Directory(path).exists()) {
-    AppUtil.showToast('Unable to create folder',isError: true);
+    AppUtil.showToast('Unable to create folder', isError: true);
     return;
   }
   Uint8List bytes = await pdf.save();
   File filed = File(filePath);
-  await filed.writeAsBytes(bytes,mode: FileMode.write,);
+  await filed.writeAsBytes(
+    bytes,
+    mode: FileMode.write,
+  );
   AppUtil.showPositiveToast('Bill downloaded successfully');
 }
-
 
 pw.Document createPdfDocument(OrderModel order) {
   double total = 0;
@@ -96,10 +98,23 @@ pw.Document createPdfDocument(OrderModel order) {
                 style: const pw.TextStyle(fontSize: 16)),
             pw.Text('Phone: 9555294879',
                 style: const pw.TextStyle(fontSize: 16)),
-            pw.SizedBox(height: 10),
+            pw.SizedBox(height: 4),
+            pw.Divider(),
+            pw.SizedBox(height: 4),
+            pw.Row(
+              children: [
+                pw.Text('Customer Name: ', style: pw.TextStyle(fontSize: 14.0)),
+                pw.Text(order.customer?.userName.capitalize ?? 'NA',
+                    style: pw.TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            pw.Divider(),
+            pw.SizedBox(height: 4),
             pw.Text('Order ID: ${order.orderId}',
                 style:
-                pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
             pw.Text('Date: ${_formatDate(order.createdAt)}',
                 style: const pw.TextStyle(fontSize: 16)),
             pw.SizedBox(height: 10),
@@ -119,10 +134,10 @@ pw.Document createPdfDocument(OrderModel order) {
             pw.Divider(),
             pw.Text('Items:',
                 style:
-                pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                    pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
             pw.TableHelper.fromTextArray(
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              headers: ['Sr', 'Items', 'Qty', 'Price','Total'],
+              headers: ['Sr', 'Items', 'Qty', 'Price', 'Total'],
               cellAlignment: pw.Alignment.centerLeft,
               cellStyle: const pw.TextStyle(fontSize: 14),
               data: order.orderItems.map((item) {
@@ -131,7 +146,7 @@ pw.Document createPdfDocument(OrderModel order) {
                   item.productName,
                   item.quantity.toString(),
                   (item.price).toStringAsFixed(2),
-                  (item.price*item.quantity).toStringAsFixed(2),
+                  (item.price * item.quantity).toStringAsFixed(2),
                 ];
               }).toList(),
             ),

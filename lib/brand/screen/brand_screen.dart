@@ -59,7 +59,6 @@ class _BrandScreenState extends State<BrandScreen> {
   void _toggleView() {
     setState(() {
       _isGridView = !_isGridView;
-
     });
   }
 

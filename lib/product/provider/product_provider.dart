@@ -26,6 +26,7 @@ class ProductProvider extends ChangeNotifier {
       notifyListeners();
       _products =
       await productService.fetchProductsByBrand(categoryId, brandId);
+      _products = Product.sortByCreated(_products);
       _filteredProducts = _products;
       _state = ProviderState.idle;
     } catch (e) {

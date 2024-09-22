@@ -48,31 +48,33 @@ class CartItemWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cartItem.productName,
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cartItem.productName,
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 2,
+                              // Allow for wrapping long product names
+                              overflow: TextOverflow
+                                  .ellipsis, // Ellipsis for overflowing text
                             ),
-                            maxLines: 2,
-                            // Allow for wrapping long product names
-                            overflow: TextOverflow
-                                .ellipsis, // Ellipsis for overflowing text
-                          ),
-                          Text(
-                            cartItem.brand,
-                            style: const TextStyle(
-                              fontSize: 14.0,
+                            Text(
+                              cartItem.brand,
+                              style: const TextStyle(
+                                fontSize: 14.0,
+                              ),
+                              maxLines: 2,
+                              // Allow for wrapping long product names
+                              overflow: TextOverflow
+                                  .ellipsis, // Ellipsis for overflowing text
                             ),
-                            maxLines: 2,
-                            // Allow for wrapping long product names
-                            overflow: TextOverflow
-                                .ellipsis, // Ellipsis for overflowing text
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       IconButton(
                         onPressed: onRemove,

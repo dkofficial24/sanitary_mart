@@ -97,7 +97,7 @@ class UserProfileTab extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Version ${snapshot.data!.version}',
+                      'Version ${snapshot.data!.version}(${snapshot.data!.buildNumber})',
                       style: TextStyle(color: Colors.grey[400], fontSize: 12),
                     ),
                   ),

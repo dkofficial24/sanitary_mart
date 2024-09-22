@@ -56,7 +56,20 @@ class OrderCard extends StatelessWidget {
                 fontSize: 14.0,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
+            const Divider(),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Customer Name: ', style: TextStyle(fontSize: 14.0)),
+                Text(order.customer?.userName.capitalize ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Text(
@@ -197,4 +210,3 @@ class OrderCard extends StatelessWidget {
     }
   }
 }
-

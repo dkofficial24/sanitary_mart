@@ -1,10 +1,13 @@
-import 'package:device_preview/device_preview.dart';
+import 'dart:async';
+import 'dart:async';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 import 'package:sanitary_mart/auth/provider/auth_provider.dart';
 import 'package:sanitary_mart/auth/screen/login_screen.dart';
@@ -42,11 +45,7 @@ Future main() async {
     return true;
   };
 
-  runApp(DevicePreview(
-      enabled: false,
-      builder: (BuildContext context) {
-        return const VendorApp();
-      },));
+  runApp(VendorApp());
 }
 
 Future<void> initFirebase() async {
@@ -60,7 +59,7 @@ class VendorApp extends StatelessWidget {
 
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
-  FirebaseAnalyticsObserver(analytics: analytics);
+      FirebaseAnalyticsObserver(analytics: analytics);
 
   @override
   Widget build(BuildContext context) {
@@ -77,42 +76,8 @@ class VendorApp extends StatelessWidget {
       authService: AuthService(),
       storageHelper: storageHelper,
     );
-    //TODO remove it later
-    //  authProvider.loadLoggedStatus();
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => authProvider,
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProductProvider(
-            ProductService(),
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => CartProvider(
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => CategoryProvider(
-            CategoryFirebaseService(),
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => BrandProvider(
-            BrandFirebaseService(),
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => OrderProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => PaymentInfoProvider()..fetchPaymentInfo(),
-        ),
-      ],
+      providers: initDependency(authProvider),
       child: Consumer<AuthenticationProvider>(
         builder: (context, provider, child) {
           return GetMaterialApp(
@@ -128,5 +93,40 @@ class VendorApp extends StatelessWidget {
         },
       ),
     );
+  }
+
+  List<SingleChildWidget> initDependency(AuthenticationProvider authProvider) {
+    return [
+      ChangeNotifierProvider(
+        create: (context) => authProvider,
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ProductProvider(
+          ProductService(),
+        ),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => CartProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => CategoryProvider(
+          CategoryFirebaseService(),
+        ),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BrandProvider(
+          BrandFirebaseService(),
+        ),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => UserProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => OrderProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => PaymentInfoProvider()..fetchPaymentInfo(),
+      ),
+    ];
   }
 }

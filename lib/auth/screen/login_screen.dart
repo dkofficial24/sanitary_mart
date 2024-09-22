@@ -55,7 +55,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(
                       height: 16,
                     ),
-                    CustomButton(
+                    const CustomButton(
                       name: AppText.next,
                       onPressed:null
                       //   () {
@@ -71,7 +71,7 @@ class LoginScreen extends StatelessWidget {
                         SizedBox(
                             width: MediaQuery.of(context).size.width*0.4,
                             child: const Divider(endIndent: 8,)),
-                        Text('OR'),
+                        const Text('OR'),
                         SizedBox(
                             width: MediaQuery.of(context).size.width*0.4,
                             child: const Divider(indent: 8,)),

@@ -223,29 +223,24 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          final cartProvider =
-              Provider.of<CartProvider>(context, listen: false);
+          final cartProvider = Provider.of<CartProvider>(context, listen: true);
           String? uid = getUserId();
           final Product product = provider.filteredProducts[index];
           return ListItemWidget(
             id: product.id,
             name: product.name,
             image: product.image ?? '',
+            cartTextEditDisable: true,
             price: product.price.toString(),
-            onQuantityChange: (value) {},
             onAdd: (value) {
-              DeBouncer.run(() {
-                cartProvider.addAndUpdateCart(
-                    uid!, product, value, widget.brandName);
-              }, milliseconds: 300);
+              cartProvider.addAndUpdateCart(
+                  uid!, product, value, widget.brandName);
             },
             onRemove: (value) {
-              DeBouncer.run(() {
-                cartProvider.removeAndUpdateCart(
-                  uid!,
-                  product.id!,
-                );
-              });
+              cartProvider.removeAndUpdateCart(
+                uid!,
+                product.id!,
+              );
             },
             onItemTap: () async {
               Get.to(ProductDetailPage(
