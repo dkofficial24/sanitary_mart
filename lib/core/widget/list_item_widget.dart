@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sanitary_mart/cart/provider/cart_provider.dart';
+import 'package:sanitary_mart/core/debouncer.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
 
 class ListItemWidget extends StatefulWidget {
@@ -6,8 +9,8 @@ class ListItemWidget extends StatefulWidget {
   final String name;
   final String image;
   final String? price;
+  final bool cartTextEditDisable;
   final VoidCallback onItemTap;
-  final Function(int quantity)? onQuantityChange;
   final Function(int quantity)? onRemove;
   final Function(int quantity)? onAdd;
 
@@ -15,10 +18,10 @@ class ListItemWidget extends StatefulWidget {
     super.key,
     required this.name,
     required this.image,
+    required this.onItemTap,
     this.id,
     this.price,
-    required this.onItemTap,
-    this.onQuantityChange,
+    this.cartTextEditDisable = false,
     this.onRemove,
     this.onAdd,
   });
@@ -48,11 +51,11 @@ class ListItemWidgetState extends State<ListItemWidget> {
       _quantity = newQuantity;
       _quantityController.text = newQuantity.toString();
     });
-    widget.onQuantityChange!(newQuantity);
   }
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
     return GestureDetector(
       onTap: widget.onItemTap,
       child: Padding(
@@ -108,44 +111,63 @@ class ListItemWidgetState extends State<ListItemWidget> {
                           ),
                           widget.id == null
                               ? const SizedBox()
-                              : Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.remove),
+                              : _quantity == 0
+                                  ? TextButton(
                                       onPressed: () {
-                                        if (_quantity > 0) {
-                                          _updateQuantity(_quantity - 1);
-                                          widget.onRemove!(_quantity);
+                                        if (!cartProvider.isLoading) {
+                                          _updateQuantity(_quantity + 1);
+                                          widget.onAdd!(_quantity);
                                         }
                                       },
-                                    ),
-                                    const SizedBox(width: 10.0),
-                                    SizedBox(
-                                      width: 50.0,
-                                      child: TextField(
-                                        controller: _quantityController,
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
+                                      child: const Text('Add to Cart'))
+                                  : Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.remove),
+                                          onPressed: () {
+                                            DeBouncer.run(() {
+                                              if (!cartProvider.isLoading) {
+                                                if (_quantity > 0) {
+                                                  _updateQuantity(
+                                                      _quantity - 1);
+                                                  widget.onRemove!(_quantity);
+                                                }
+                                              }
+                                            }, milliseconds: 300);
+                                          },
                                         ),
-                                        onChanged: (value) {
-                                          int newValue =
-                                              int.tryParse(value) ?? 1;
-                                          _updateQuantity(newValue);
-                                        },
-                                      ),
+                                        const SizedBox(width: 8.0),
+                                        SizedBox(
+                                          width: 40.0,
+                                          child: TextField(
+                                            controller: _quantityController,
+                                            readOnly: widget.cartTextEditDisable,
+                                            keyboardType: TextInputType.number,
+                                            textAlign: TextAlign.center,
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                            ),
+                                            onChanged: (value) {
+                                              int newValue =
+                                                  int.tryParse(value) ?? 1;
+                                              _updateQuantity(newValue);
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8.0),
+                                        IconButton(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () {
+                                            DeBouncer.run(() {
+                                              if (!cartProvider.isLoading) {
+                                                _updateQuantity(_quantity + 1);
+                                                widget.onAdd!(_quantity);
+                                              }
+                                            }, milliseconds: 300);
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 10.0),
-                                    IconButton(
-                                      icon: const Icon(Icons.add),
-                                      onPressed: () {
-                                        _updateQuantity(_quantity + 1);
-                                        widget.onAdd!(_quantity);
-                                      },
-                                    ),
-                                  ],
-                                ),
                         ],
                       ),
                   ],

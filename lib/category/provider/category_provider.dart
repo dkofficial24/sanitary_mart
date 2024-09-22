@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sanitary_mart/brand/model/brand_model.dart';
 import 'package:sanitary_mart/category/model/category_model.dart';
@@ -31,6 +34,7 @@ class CategoryProvider extends ChangeNotifier {
 
   Future<void> fetchCategories() async {
     try {
+      _error = null;
       _state = ProviderState.loading;
       notifyListeners();
       _categoryList = await firebaseService.getCategories();
@@ -45,6 +49,7 @@ class CategoryProvider extends ChangeNotifier {
   }
 
   void filterCategories(String query) {
+    _error = null;
     if (query.isEmpty) {
       _filteredCategoryList = _categoryList;
     } else {
@@ -58,10 +63,16 @@ class CategoryProvider extends ChangeNotifier {
 
   Future<void> filterProduct(String query) async {
     try {
+      _error = null;
       _state = ProviderState.loading;
       notifyListeners();
       _filterProductList = await firebaseService.fetchProducts(query);
       _state = ProviderState.idle;
+    } on SocketException {
+      _error = 'Unable to search due to slow internet';
+      _state = ProviderState.error;
+    } on TimeoutException {
+      _error = 'Timeout. Please try again';
     } catch (e) {
       _error = 'Failed to fetch items: $e';
       _state = ProviderState.error;
@@ -72,6 +83,7 @@ class CategoryProvider extends ChangeNotifier {
 
   Future<String?> fetchBrand(String brandId) async {
     try {
+      _error = null;
       _state = ProviderState.loading;
       notifyListeners();
       Brand? brand = await firebaseService.fetchBrandById(brandId);

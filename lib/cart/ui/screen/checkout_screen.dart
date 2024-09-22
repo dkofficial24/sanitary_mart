@@ -91,7 +91,7 @@ class CheckoutScreen extends StatelessWidget {
                               style: TextStyle(color: Colors.green),
                             ),
                             Text(
-                              (totalDiscount / 10).toStringAsFixed(1),
+                              (totalDiscount / 10).toStringAsFixed(2),
                               style: const TextStyle(color: Colors.green),
                             ),
                           ],

@@ -107,8 +107,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       return SliverFillRemaining(
                         child: ErrorRetryWidget(
                           onRetry: () {
-                            if (mounted) {
-                              setState(() {});
+                            if (_searchController.text.isNotEmpty) {
+                              _onSearchChanged();
+                            } else {
+                              if (mounted) {
+                                setState(() {});
+                              }
                             }
                           },
                         ),
