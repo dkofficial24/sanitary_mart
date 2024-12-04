@@ -56,7 +56,40 @@ class OrderCard extends StatelessWidget {
                 fontSize: 14.0,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
+            const Divider(),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Customer Name: ', style: TextStyle(fontSize: 14.0)),
+                Text(order.endUser?.name.capitalize ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Mobile: ', style: TextStyle(fontSize: 14.0)),
+                Text(order.endUser?.mobile ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Address: ', style: TextStyle(fontSize: 14.0)),
+                Text(order.endUser?.village ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Text(
@@ -197,4 +230,3 @@ class OrderCard extends StatelessWidget {
     }
   }
 }
-

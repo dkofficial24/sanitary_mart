@@ -1,3 +1,4 @@
+import 'package:sanitary_mart/core/model/end_user_model.dart';
 import 'package:sanitary_mart/order/model/order_item.dart';
 import 'package:sanitary_mart/order/model/order_status.dart';
 
@@ -8,6 +9,7 @@ class OrderModel {
   int? updatedAt;
   OrderStatus orderStatus;
   Customer? customer;
+  EndUser? endUser;
   bool userVerified;
   String? note;
 
@@ -15,6 +17,7 @@ class OrderModel {
     required this.orderId,
     required this.orderItems,
     this.customer,
+    this.endUser,
     this.orderStatus = OrderStatus.pending,
     this.createdAt,
     this.updatedAt,
@@ -32,6 +35,7 @@ class OrderModel {
       'userVerified': userVerified,
       'note': note,
       'customer': customer != null ? customer!.toJson() : null,
+      'endUser': endUser != null ? endUser!.toJson() : null,
     };
   }
 
@@ -49,6 +53,8 @@ class OrderModel {
       note: json['note'],
       customer:
           json['customer'] != null ? Customer.fromJson(json['customer']) : null,
+      endUser:
+          json['endUser'] != null ? EndUser.fromJson(json['endUser']) : null,
     );
   }
 }

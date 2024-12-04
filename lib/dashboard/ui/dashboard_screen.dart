@@ -5,7 +5,8 @@ import 'package:sanitary_mart/category/ui/screen/category_screen.dart';
 import 'package:sanitary_mart/profile/ui/screen/user_profile_tab.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({this.selectedTab=0,super.key});
+  const DashboardScreen({this.selectedTab = 0, super.key});
+
   final int selectedTab;
 
   @override
@@ -18,8 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<Widget> tabScreens = [
     const CategoryScreen(),
     //const CategoryScreen(),
-    const CartScreen(
-    ),
+    const CartScreen(),
     const UserProfileTab()
   ];
 

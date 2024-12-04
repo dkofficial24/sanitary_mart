@@ -1,13 +1,18 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:sanitary_mart/auth/provider/auth_provider.dart';
+import 'package:sanitary_mart/cart/model/cart_item_model.dart';
+import 'package:sanitary_mart/cart/provider/cart_provider.dart';
+import 'package:sanitary_mart/cart/ui/screen/cart_screen.dart';
 import 'package:sanitary_mart/core/constant/constant.dart';
+import 'package:sanitary_mart/core/debouncer.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/core/widget/list_item_widget.dart';
 import 'package:sanitary_mart/core/widget/search_text_field.widget.dart';
 import 'package:sanitary_mart/core/widget/shimmer_grid_list_widget.dart';
-import 'package:sanitary_mart/core/widget/view_type_toggle.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
 import 'package:sanitary_mart/product/provider/product_provider.dart';
@@ -73,12 +78,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
       appBar: CustomAppBar(
         title: widget.brandName,
         actions: [
-          ViewTypeToggle(
-            onToggle: (isGridView) {
-              _isGridView = isGridView;
-              setState(() {});
-            },
-          ),
+          IconButton(
+              onPressed: () {
+                FirebaseAnalytics.instance.logEvent(name: 'pdp_cart');
+                Get.to(() => const CartScreen());
+              },
+              icon: const Icon(
+                Icons.shopping_cart_outlined,
+                color: Colors.white,
+              ))
+          // ViewTypeToggle(
+          //   onToggle: (isGridView) {
+          //     _isGridView = isGridView;
+          //     setState(() {});
+          //   },
+          // ),
         ],
       ),
       body: CustomScrollView(
@@ -166,6 +180,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
+                      height: 100,
+                      width: 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12.0),
                         child: NetworkImageWidget(
@@ -173,8 +189,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           imgHeight: 50,
                         ),
                       ),
-                      height: 100,
-                      width: 100,
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -209,12 +223,26 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
+          final cartProvider = Provider.of<CartProvider>(context, listen: true);
+          String? uid = getUserId();
           final Product product = provider.filteredProducts[index];
           return ListItemWidget(
+            id: product.id,
             name: product.name,
             image: product.image ?? '',
+            cartTextEditDisable: true,
             price: product.price.toString(),
-            onItemTap: () {
+            onAdd: (value) {
+              cartProvider.addAndUpdateCart(
+                  uid!, product, value, widget.brandName);
+            },
+            onRemove: (value) {
+              cartProvider.removeAndUpdateCart(
+                uid!,
+                product.id!,
+              );
+            },
+            onItemTap: () async {
               Get.to(ProductDetailPage(
                 product: product,
                 brandName: widget.brandName,
@@ -225,5 +253,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
         childCount: provider.filteredProducts.length,
       ),
     );
+  }
+
+  String? getUserId() {
+    return Provider.of<AuthenticationProvider>(context, listen: false)
+        .getCurrentUser();
   }
 }

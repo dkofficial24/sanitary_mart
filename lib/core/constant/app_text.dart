@@ -1,5 +1,5 @@
 class AppText{
-static const String appName = 'We Tube';
+static const String appName = 'Sanitary Mart';
 static const String phoneFieldHint = 'Input Phone Number';
 static const String invalidPhoneNo = 'Input valid number';
 static const String next = 'Next';

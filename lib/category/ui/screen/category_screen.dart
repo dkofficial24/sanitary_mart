@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sanitary_mart/brand/screen/brand_screen.dart';
 import 'package:sanitary_mart/category/provider/category_provider.dart';
 import 'package:sanitary_mart/core/constant/constant.dart';
+import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/core/widget/custom_app_bar.dart';
 import 'package:sanitary_mart/core/widget/list_item_widget.dart';
@@ -12,6 +13,8 @@ import 'package:sanitary_mart/core/widget/search_text_field.widget.dart';
 import 'package:sanitary_mart/core/widget/shimmer_grid_list_widget.dart';
 import 'package:sanitary_mart/core/widget/view_type_toggle.dart';
 import 'package:sanitary_mart/core/widget/widget.dart';
+import 'package:sanitary_mart/product/model/product_model.dart';
+import 'package:sanitary_mart/product/ui/screen/product_detail_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({Key? key}) : super(key: key);
@@ -41,8 +44,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _onSearchChanged() {
-    Provider.of<CategoryProvider>(context, listen: false)
-        .filterCategories(_searchController.text);
+    if (_searchController.text.isNotEmpty) {
+      Provider.of<CategoryProvider>(context, listen: false)
+          .filterProduct(_searchController.text);
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void fetchCategories() {
@@ -50,9 +58,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _toggleView() {
-    setState(() {
-      _isGridView = !_isGridView;
-    });
+    if (mounted) {
+      setState(() {
+        _isGridView = !_isGridView;
+      });
+    }
   }
 
   @override
@@ -64,7 +74,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ViewTypeToggle(
             onToggle: (isGridView) {
               _isGridView = isGridView;
-              setState(() {});
+              if (mounted) {
+                setState(() {});
+              }
             },
           ),
         ],
@@ -76,44 +88,81 @@ class _CategoryScreenState extends State<CategoryScreen> {
               padding: const EdgeInsets.all(16),
               child: CustomSearchTextField(
                 controller: _searchController,
-                hintText: 'Search Category',
+                hintText: 'Search Product',
               ),
             ),
           ),
+          _searchController.text.isNotEmpty
+              ? Consumer<CategoryProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.state == ProviderState.loading) {
+                      return SliverFillRemaining(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ShimmerGridListWidget(
+                          isGridView: _isGridView,
+                        ),
+                      ));
+                    } else if (provider.state == ProviderState.error) {
+                      return SliverFillRemaining(
+                        child: ErrorRetryWidget(
+                          onRetry: () {
+                            if (_searchController.text.isNotEmpty) {
+                              _onSearchChanged();
+                            } else {
+                              if (mounted) {
+                                setState(() {});
+                              }
+                            }
+                          },
+                        ),
+                      );
+                    }
 
-          Consumer<CategoryProvider>(
-            builder: (context, provider, child) {
-              if (provider.state == ProviderState.loading) {
-                return SliverFillRemaining(
-                    child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ShimmerGridListWidget(
-                    isGridView: _isGridView,
-                  ),
-                ));
-              } else if (provider.state == ProviderState.error) {
-                return SliverFillRemaining(
-                  child: ErrorRetryWidget(
-                    onRetry: () {
-                      fetchCategories();
-                    },
-                  ),
-                );
-              }
+                    if (provider.filteredProductList.isEmpty) {
+                      return const SliverFillRemaining(
+                        child: Center(
+                          child: Text('No product available'),
+                        ),
+                      );
+                    }
 
-              if (provider.filteredCategoryList.isEmpty) {
-                return const SliverFillRemaining(
-                  child: Center(
-                    child: Text('No category available'),
-                  ),
-                );
-              }
+                    return _buildProductListView(provider);
+                  },
+                )
+              : Consumer<CategoryProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.state == ProviderState.loading) {
+                      return SliverFillRemaining(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ShimmerGridListWidget(
+                          isGridView: _isGridView,
+                        ),
+                      ));
+                    } else if (provider.state == ProviderState.error) {
+                      return SliverFillRemaining(
+                        child: ErrorRetryWidget(
+                          onRetry: () {
+                            fetchCategories();
+                          },
+                        ),
+                      );
+                    }
 
-              return _isGridView
-                  ? _buildGridView(provider)
-                  : _buildListView(provider);
-            },
-          ),
+                    if (provider.filteredCategoryList.isEmpty) {
+                      return const SliverFillRemaining(
+                        child: Center(
+                          child: Text('No category available'),
+                        ),
+                      );
+                    }
+
+                    return _isGridView
+                        ? _buildGridView(provider)
+                        : _buildListView(provider);
+                  },
+                ),
         ],
       ),
     );
@@ -160,6 +209,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
           );
         },
         childCount: provider.filteredCategoryList.length,
+      ),
+    );
+  }
+
+  Widget _buildProductListView(CategoryProvider provider) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          final Product product = provider.filteredProductList[index];
+          return ListItemWidget(
+            name: product.name,
+            image: product.image ?? '',
+            price: product.price.toString(),
+            onItemTap: () async {
+              // _searchController.clear();
+              String? brandName = await provider.fetchBrand(product.brandId);
+              Get.to(ProductDetailPage(
+                  product: product, brandName: brandName ?? ''));
+            },
+          );
+        },
+        childCount: provider.filteredProductList.length,
       ),
     );
   }
