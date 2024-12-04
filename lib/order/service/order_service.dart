@@ -4,12 +4,12 @@ import 'package:sanitary_mart/order/model/order_model.dart';
 class OrderService {
   Future placeOrder(OrderModel order) async {
     await FirebaseFirestore.instance
-        .collection('orders')
+        .collection('ordersV2')
         .doc(order.customer!.uId)
         .set(order.customer!.toJson());
 
     await FirebaseFirestore.instance
-        .collection('orders')
+        .collection('ordersV2')
         .doc(order.customer!.uId)
         .collection('confirmOrders')
         .doc(order.orderId)
@@ -18,7 +18,7 @@ class OrderService {
 
   Future<List<OrderModel>> fetchUserOrders(String uId) async {
     final userSnapshot =
-        await FirebaseFirestore.instance.collection('orders').doc(uId).get();
+        await FirebaseFirestore.instance.collection('ordersV2').doc(uId).get();
 
     if (!userSnapshot.exists) {
       return [];
@@ -27,7 +27,7 @@ class OrderService {
         Customer.fromJson(userSnapshot.data() as Map<String, dynamic>);
 
     final ordersSnapshot = (await FirebaseFirestore.instance
-        .collection('orders')
+        .collection('ordersV2')
         .doc(uId)
         .collection('confirmOrders')
         .orderBy('createdAt', descending: true)

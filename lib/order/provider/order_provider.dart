@@ -6,6 +6,7 @@ import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
+import 'package:sanitary_mart/core/model/end_user_model.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/dashboard/ui/dashboard_screen.dart';
 import 'package:sanitary_mart/notification/model/notification_model.dart';
@@ -29,6 +30,7 @@ class OrderProvider extends ChangeNotifier {
   Future placeOrder(
       {required List<CartItem> cartItems,
       required UserModel userModel,
+      required EndUser endUser,
       String? note}) async {
     try {
       _state = ProviderState.loading;
@@ -51,6 +53,7 @@ class OrderProvider extends ChangeNotifier {
           updatedAt: DateTime.now().millisecondsSinceEpoch,
           userVerified: userModel.verified ?? false,
           note: note,
+          endUser: endUser,
           customer: Customer(
             uId: userModel.uId,
             userName: userModel.userName,

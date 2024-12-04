@@ -104,7 +104,27 @@ pw.Document createPdfDocument(OrderModel order) {
             pw.Row(
               children: [
                 pw.Text('Customer Name: ', style: pw.TextStyle(fontSize: 14.0)),
-                pw.Text(order.customer?.userName.capitalize ?? 'NA',
+                pw.Text(order.endUser?.name.capitalize ?? 'NA',
+                    style: pw.TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            pw.SizedBox(height: 4),
+            pw.Row(
+              children: [
+                pw.Text('Mobile: ', style: pw.TextStyle(fontSize: 14.0)),
+                pw.Text(order.endUser?.mobile ?? 'NA',
+                    style: pw.TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            pw.SizedBox(height: 4),
+            pw.Row(
+              children: [
+                pw.Text('Address: ', style: pw.TextStyle(fontSize: 14.0)),
+                pw.Text(order.endUser?.village ?? 'NA',
                     style: pw.TextStyle(
                       fontSize: 14.0,
                     )),

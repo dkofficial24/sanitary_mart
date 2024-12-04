@@ -62,7 +62,27 @@ class OrderCard extends StatelessWidget {
             Row(
               children: [
                 const Text('Customer Name: ', style: TextStyle(fontSize: 14.0)),
-                Text(order.customer?.userName.capitalize ?? 'NA',
+                Text(order.endUser?.name.capitalize ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Mobile: ', style: TextStyle(fontSize: 14.0)),
+                Text(order.endUser?.mobile ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Address: ', style: TextStyle(fontSize: 14.0)),
+                Text(order.endUser?.village ?? 'NA',
                     style: const TextStyle(
                       fontSize: 14.0,
                     )),

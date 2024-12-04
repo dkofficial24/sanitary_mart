@@ -48,18 +48,7 @@ class CategoryProvider extends ChangeNotifier {
     }
   }
 
-  void filterCategories(String query) {
-    _error = null;
-    if (query.isEmpty) {
-      _filteredCategoryList = _categoryList;
-    } else {
-      _filteredCategoryList = _categoryList
-          .where((category) =>
-              category.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-    notifyListeners();
-  }
+
 
   Future<void> filterProduct(String query) async {
     try {

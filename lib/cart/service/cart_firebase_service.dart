@@ -31,19 +31,17 @@ class CartFirebaseService {
   }
 
   Future<void> clearFullCart(String userId) async {
-      final docRef = _cartCollection.doc(userId);
-      // Delete the cart document
-      await docRef.delete();
+    final docRef = _cartCollection.doc(userId);
+    // Delete the cart document
+    await docRef.delete();
 
-      // Also delete the cart items collection
-      final cartItemsRef = docRef.collection('cartItems');
-      final cartItemsSnapshot = await cartItemsRef.get();
-      for (var doc in cartItemsSnapshot.docs) {
-        await doc.reference.delete();
-      }
-
+    // Also delete the cart items collection
+    final cartItemsRef = docRef.collection('cartItems');
+    final cartItemsSnapshot = await cartItemsRef.get();
+    for (var doc in cartItemsSnapshot.docs) {
+      await doc.reference.delete();
+    }
   }
-
 
   Future<void> updateCartItemQuantity(
       String userId, String productId, int newQuantity) async {
@@ -58,8 +56,7 @@ class CartFirebaseService {
   Future<List<CartItem>> getCartItems(String userId) async {
     try {
       final QuerySnapshot<Map<String, dynamic>> snapshot =
-          await _cartCollection.doc(userId).collection('cartItems')
-              .get();
+          await _cartCollection.doc(userId).collection('cartItems').get();
 
       return snapshot.docs.map((doc) => CartItem.fromJson(doc.data())).toList();
     } catch (e) {
