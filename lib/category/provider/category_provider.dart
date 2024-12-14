@@ -31,6 +31,7 @@ class CategoryProvider extends ChangeNotifier {
   List<Product> get filteredProductList => _filterProductList;
 
   String? get error => _error;
+  Timer? _debounce;
 
   Future<void> fetchCategories() async {
     try {
@@ -49,8 +50,17 @@ class CategoryProvider extends ChangeNotifier {
   }
 
 
+  Future filterProduct(String query)async{
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 200), () {
 
-  Future<void> filterProduct(String query) async {
+      if(query.isEmpty)return;
+
+      _filterProduct(query);
+    });
+  }
+
+  Future<void> _filterProduct(String query) async {
     try {
       _error = null;
       _state = ProviderState.loading;

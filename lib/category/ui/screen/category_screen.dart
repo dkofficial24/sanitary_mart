@@ -53,6 +53,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
   }
 
+
+
   void fetchCategories() {
     Provider.of<CategoryProvider>(context, listen: false).fetchCategories();
   }
