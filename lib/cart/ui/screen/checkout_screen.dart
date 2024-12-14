@@ -231,16 +231,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Total'),
-            Text('₹${total.toStringAsFixed(2)}'),
+            const Text('Total',style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('₹${total.toStringAsFixed(2)}',style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         if (totalDiscount > 0)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Discount'),
-              Text('- ₹${totalDiscount.toStringAsFixed(2)}'),
+              const Text('Points',style: TextStyle(color: Colors.green)),
+              Text(
+                (totalDiscount / 10).toStringAsFixed(2),
+                style: const TextStyle(color: Colors.green),
+              )
             ],
           ),
       ],
