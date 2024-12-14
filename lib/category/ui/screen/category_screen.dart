@@ -43,8 +43,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     super.dispose();
   }
 
+  String searchQuery='';
   void _onSearchChanged() {
-    if (_searchController.text.isNotEmpty) {
+    if (_searchController.text.isNotEmpty && searchQuery!=_searchController.text) {
+      searchQuery = _searchController.text;
       Provider.of<CategoryProvider>(context, listen: false)
           .filterProduct(_searchController.text);
     }

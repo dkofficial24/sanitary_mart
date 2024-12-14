@@ -36,7 +36,8 @@ class CategoryFirebaseService {
     try {
       // Perform the query on the 'product_keywords' collection
       final snapshot = await firestore.collection('product_keywords')
-          .where('keywords', arrayContains: keyword.toLowerCase()) // Use 'arrayContains' to match any keyword
+          .where('keywords', arrayContains: keyword.toLowerCase()) 
+          .limit(30)
           .get();
 
       // If no products found

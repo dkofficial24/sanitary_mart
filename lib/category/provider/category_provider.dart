@@ -7,6 +7,7 @@ import 'package:sanitary_mart/category/model/category_model.dart';
 import 'package:sanitary_mart/category/service/category_firebase_service.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
+import 'package:async/async.dart';
 
 class CategoryProvider extends ChangeNotifier {
   final CategoryFirebaseService firebaseService;
@@ -50,35 +51,56 @@ class CategoryProvider extends ChangeNotifier {
   }
 
 
-  Future filterProduct(String query)async{
+  CancelableOperation<List<Product>>? _currentQuery; // To cancel previous queries
+
+  /// Debounced filter function
+  Future<void> filterProduct(String query) async {
+    if (query.isEmpty || query.length <= 2) return;
+
+    // Cancel ongoing debounce timer
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 200), () {
 
-      if(query.isEmpty)return;
-
+    // Add debounce
+    _debounce = Timer(const Duration(milliseconds: 300), () {
       _filterProduct(query);
     });
   }
 
+  /// Core filter logic
   Future<void> _filterProduct(String query) async {
+    // Cancel the current Firestore query if it exists
+    _currentQuery?.cancel();
+
+    // Start loading state
+    _state = ProviderState.loading;
+    notifyListeners();
+
     try {
-      _error = null;
-      _state = ProviderState.loading;
-      notifyListeners();
-      _filterProductList = await firebaseService.fetchProducts(query);
+      // Create a cancelable Firestore query
+      _currentQuery = CancelableOperation<List<Product>>.fromFuture(
+        firebaseService.fetchProducts(query),
+      );
+
+      // Wait for the response
+      final result = await _currentQuery!.value;
+
+      // Update the filtered product list with the latest result
+      _filterProductList = result;
       _state = ProviderState.idle;
-    } on SocketException {
+    }  on SocketException {
       _error = 'Unable to search due to slow internet';
       _state = ProviderState.error;
     } on TimeoutException {
       _error = 'Timeout. Please try again';
+      _state = ProviderState.error;
     } catch (e) {
       _error = 'Failed to fetch items: $e';
       _state = ProviderState.error;
-    } finally {
+    }  finally {
       notifyListeners();
     }
   }
+
 
   Future<String?> fetchBrand(String brandId) async {
     try {
