@@ -82,126 +82,101 @@ pw.Document createPdfDocument(OrderModel order) {
   // Create a PDF document
   final pdf = pw.Document();
 
-  // Add content to the PDF
+  // Add multi-page content to the PDF
   pdf.addPage(
-    pw.Page(
-      build: (pw.Context context) => pw.Container(
-        padding: const pw.EdgeInsets.all(10),
-        child: pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text(
-              'Shree Balaji Sanitary & Electronics',
-              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
-            ),
-            pw.Text('Bhiwani Road, Bahal',
-                style: const pw.TextStyle(fontSize: 16)),
-            pw.Text('Phone: 9555294879',
-                style: const pw.TextStyle(fontSize: 16)),
-            pw.SizedBox(height: 4),
-            pw.Divider(),
-            pw.SizedBox(height: 4),
-            pw.Row(
-              children: [
-                pw.Text('Customer Name: ', style: pw.TextStyle(fontSize: 14.0)),
-                pw.Text(order.endUser?.name.capitalize ?? 'NA',
-                    style: pw.TextStyle(
-                      fontSize: 14.0,
-                    )),
-              ],
-            ),
-            pw.SizedBox(height: 4),
-            pw.Row(
-              children: [
-                pw.Text('Mobile: ', style: pw.TextStyle(fontSize: 14.0)),
-                pw.Text(order.endUser?.mobile ?? 'NA',
-                    style: pw.TextStyle(
-                      fontSize: 14.0,
-                    )),
-              ],
-            ),
-            pw.SizedBox(height: 4),
-            pw.Row(
-              children: [
-                pw.Text('Address: ', style: pw.TextStyle(fontSize: 14.0)),
-                pw.Text(order.endUser?.village ?? 'NA',
-                    style: pw.TextStyle(
-                      fontSize: 14.0,
-                    )),
-              ],
-            ),
-            pw.Divider(),
-            pw.SizedBox(height: 4),
-            pw.Text('Order ID: ${order.orderId}',
-                style:
-                    pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-            pw.Text('Date: ${_formatDate(order.createdAt)}',
-                style: const pw.TextStyle(fontSize: 16)),
-            pw.SizedBox(height: 10),
-            // pw.Row(
-            //   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            //   children: [
-            //    // pw.Text('Status:', style: const pw.TextStyle(fontSize: 16)),
-            //     pw.Text(
-            //       '${order.orderStatus.name.capitalize}',
-            //       style: pw.TextStyle(
-            //           fontWeight: pw.FontWeight.bold,
-            //           fontSize: 16,
-            //           color: _getStatusColor(order.orderStatus)),
-            //     ),
-            //   ],
-            // ),
-            pw.Divider(),
-            pw.Text('Items:',
-                style:
-                    pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-            pw.TableHelper.fromTextArray(
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-              headers: ['Sr', 'Items', 'Qty', 'Price', 'Total'],
-              cellAlignment: pw.Alignment.centerLeft,
-              cellStyle: const pw.TextStyle(fontSize: 14),
-              data: order.orderItems.map((item) {
-                return [
-                  (order.orderItems.indexOf(item) + 1).toString(),
-                  item.productName,
-                  item.quantity.toString(),
-                  (item.price).toStringAsFixed(2),
-                  (item.price * item.quantity).toStringAsFixed(2),
-                ];
-              }).toList(),
-            ),
-            pw.Divider(),
-            pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              children: [
-                pw.Text('SubTotal:', style: const pw.TextStyle(fontSize: 16)),
-                pw.Text(
-                  total.toStringAsFixed(2),
-                  style: const pw.TextStyle(fontSize: 16),
+    pw.MultiPage(
+      pageFormat: PdfPageFormat.a4,
+      margin: const pw.EdgeInsets.all(10),
+      build: (pw.Context context) {
+        return [
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                'Shree Balaji Sanitary & Electronics',
+                style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
                 ),
-              ],
-            ),
-            // if (discount > 0)
-            //   pw.Row(
-            //     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       pw.Text(
-            //         'Point:',
-            //         style: const pw.TextStyle(
-            //           fontSize: 16,
-            //         ),
-            //       ),
-            //       pw.Text(
-            //         (discount / 10).toStringAsFixed(2),
-            //         style: const pw.TextStyle(
-            //           fontSize: 16,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-          ],
-        ),
-      ),
+              ),
+              pw.Text('Bhiwani Road, Bahal',
+                  style: const pw.TextStyle(fontSize: 16)),
+              pw.Text('Phone: 9555294879',
+                  style: const pw.TextStyle(fontSize: 16)),
+              pw.SizedBox(height: 4),
+              pw.Divider(),
+              pw.SizedBox(height: 4),
+              pw.Row(
+                children: [
+                  pw.Text('Customer Name: ',
+                      style: pw.TextStyle(fontSize: 14.0)),
+                  pw.Text(order.endUser?.name.capitalize ?? 'NA',
+                      style: pw.TextStyle(fontSize: 14.0)),
+                ],
+              ),
+              pw.SizedBox(height: 4),
+              pw.Row(
+                children: [
+                  pw.Text('Mobile: ', style: pw.TextStyle(fontSize: 14.0)),
+                  pw.Text(order.endUser?.mobile ?? 'NA',
+                      style: pw.TextStyle(fontSize: 14.0)),
+                ],
+              ),
+              pw.SizedBox(height: 4),
+              pw.Row(
+                children: [
+                  pw.Text('Address: ', style: pw.TextStyle(fontSize: 14.0)),
+                  pw.Text(order.endUser?.village ?? 'NA',
+                      style: pw.TextStyle(fontSize: 14.0)),
+                ],
+              ),
+              pw.Divider(),
+              pw.SizedBox(height: 4),
+              pw.Text('Order ID: ${order.orderId}',
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  )),
+              pw.Text('Date: ${_formatDate(order.createdAt)}',
+                  style: const pw.TextStyle(fontSize: 16)),
+              pw.SizedBox(height: 10),
+              pw.Divider(),
+              pw.Text('Items:',
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  )),
+              pw.SizedBox(height: 10),
+            ],
+          ),
+          pw.TableHelper.fromTextArray(
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            headers: ['Sr', 'Items', 'Qty', 'Price', 'Total'],
+            cellAlignment: pw.Alignment.centerLeft,
+            cellStyle: const pw.TextStyle(fontSize: 14),
+            data: order.orderItems.map((item) {
+              return [
+                (order.orderItems.indexOf(item) + 1).toString(),
+                item.productName,
+                item.quantity.toString(),
+                item.price.toStringAsFixed(2),
+                (item.price * item.quantity).toStringAsFixed(2),
+              ];
+            }).toList(),
+          ),
+          pw.Divider(),
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text('SubTotal:', style: const pw.TextStyle(fontSize: 16)),
+              pw.Text(
+                total.toStringAsFixed(2),
+                style: const pw.TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ];
+      },
     ),
   );
   return pdf;
