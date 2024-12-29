@@ -55,7 +55,7 @@ class CategoryProvider extends ChangeNotifier {
 
   /// Debounced filter function
   Future<void> filterProduct(String query) async {
-    if (query.isEmpty || query.length <= 2) return;
+    if (query.isEmpty) return;
 
     // Cancel ongoing debounce timer
     if (_debounce?.isActive ?? false) _debounce?.cancel();
