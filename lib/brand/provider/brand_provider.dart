@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sanitary_mart/brand/model/brand_model.dart';
 import 'package:sanitary_mart/brand/service/brand_firebase_service.dart';
+import 'package:sanitary_mart/core/error_util.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 
 class BrandProvider extends ChangeNotifier {
@@ -32,6 +33,7 @@ class BrandProvider extends ChangeNotifier {
       _state = ProviderState.idle;
     } catch (e) {
       _error = 'Failed to fetch items: $e';
+      ErrorUtil.handleFirebaseError(e);
       _state = ProviderState.error;
     } finally {
       notifyListeners();

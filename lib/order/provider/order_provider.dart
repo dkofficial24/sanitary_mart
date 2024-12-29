@@ -5,6 +5,7 @@ import 'package:sanitary_mart/auth/model/user_model.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
+import 'package:sanitary_mart/core/error_util.dart';
 import 'package:sanitary_mart/core/log/logger.dart';
 import 'package:sanitary_mart/core/model/end_user_model.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
@@ -94,7 +95,7 @@ class OrderProvider extends ChangeNotifier {
       Get.to(const OrderScreen());
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong!', isError: true);
+      ErrorUtil.handleFirebaseError(e);
       FirebaseAnalytics.instance.logEvent(name: 'error_order_placed');
       Log.e(e);
     } finally {
@@ -111,7 +112,7 @@ class OrderProvider extends ChangeNotifier {
       _state = ProviderState.idle;
     } catch (e) {
       _state = ProviderState.error;
-      Log.e(e);
+      ErrorUtil.handleFirebaseError(e);
       filteredOrderModelList = orderModelList = [];
       FirebaseAnalytics.instance.logEvent(name: 'load_orders');
     } finally {

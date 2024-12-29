@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sanitary_mart/core/error_util.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
 import 'package:sanitary_mart/product/service/product_service.dart';
@@ -31,6 +32,7 @@ class ProductProvider extends ChangeNotifier {
       _state = ProviderState.idle;
     } catch (e) {
       _state = ProviderState.error;
+      ErrorUtil.handleFirebaseError(e);
     } finally {
       notifyListeners();
     }

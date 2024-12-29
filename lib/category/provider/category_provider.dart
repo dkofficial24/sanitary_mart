@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sanitary_mart/brand/model/brand_model.dart';
 import 'package:sanitary_mart/category/model/category_model.dart';
 import 'package:sanitary_mart/category/service/category_firebase_service.dart';
+import 'package:sanitary_mart/core/error_util.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
 import 'package:async/async.dart';
@@ -26,7 +27,6 @@ class CategoryProvider extends ChangeNotifier {
 
   List<Category> get categoryList => _categoryList;
 
-  List<Product> _products = [];
   List<Product> _filterProductList = [];
 
   List<Product> get filteredProductList => _filterProductList;
@@ -44,6 +44,7 @@ class CategoryProvider extends ChangeNotifier {
       _state = ProviderState.idle;
     } catch (e) {
       _error = 'Failed to fetch items: $e';
+      ErrorUtil.handleFirebaseError(e);
       _state = ProviderState.error;
     } finally {
       notifyListeners();
@@ -111,7 +112,7 @@ class CategoryProvider extends ChangeNotifier {
       _state = ProviderState.idle;
       return brand!.name;
     } catch (e) {
-      _error = 'Failed to fetch items: $e';
+      ErrorUtil.handleFirebaseError(e);
       _state = ProviderState.error;
       return null;
     } finally {

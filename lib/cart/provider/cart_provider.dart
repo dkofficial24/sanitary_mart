@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:sanitary_mart/cart/model/cart_item_model.dart';
 import 'package:sanitary_mart/cart/service/cart_firebase_service.dart';
 import 'package:sanitary_mart/core/app_util.dart';
+import 'package:sanitary_mart/core/error_util.dart';
 import 'package:sanitary_mart/core/provider_state.dart';
 import 'package:sanitary_mart/order/service/order_service.dart';
 import 'package:sanitary_mart/product/model/product_model.dart';
@@ -35,7 +36,7 @@ class CartProvider extends ChangeNotifier {
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart');
     } catch (e) {
       _state = ProviderState.error;
-      AppUtil.showToast('Something went wrong', isError: true);
+      ErrorUtil.handleFirebaseError(e);
       FirebaseAnalytics.instance.logEvent(name: 'fetch_cart_error');
     } finally {
       notifyListeners();
@@ -56,6 +57,7 @@ class CartProvider extends ChangeNotifier {
         fetchCartItems(uid);
       }
     } catch (e) {
+      ErrorUtil.handleFirebaseError(e);
     } finally {
       _state = ProviderState.idle;
       notifyListeners();
@@ -161,9 +163,4 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearCart() async {
-    void reset() {
-      _cartItems = [];
-    }
-  }
 }
